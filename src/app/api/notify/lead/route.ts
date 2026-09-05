@@ -27,7 +27,7 @@ export async function POST(request: Request) {
   }
 
   const admin = createAdminClient();
-  const { data: profile } = await admin
+  const { data: profile, error: dbError } = await admin
     .from("profiles")
     .select("phone, full_name")
     .eq("id", brokerId)
@@ -35,7 +35,15 @@ export async function POST(request: Request) {
 
   const phone = normalizeSaudiPhone(profile?.phone ?? "");
   if (!phone) {
-    return NextResponse.json({ ok: false, reason: "no_phone" });
+    return NextResponse.json({
+      ok: false,
+      reason: "no_phone",
+      debug: {
+        dbError: dbError?.message ?? null,
+        profileFound: !!profile,
+        rawPhone: profile?.phone ?? null,
+      },
+    });
   }
 
   const propType =
