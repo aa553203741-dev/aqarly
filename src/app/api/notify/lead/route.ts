@@ -71,9 +71,14 @@ export async function POST(request: Request) {
 
   try {
     const result = await sendLeadWhatsApp(phone, summary);
-    return NextResponse.json({ ok: result.sent, reason: result.reason });
+    return NextResponse.json({ ok: result.sent, reason: result.reason, to: phone });
   } catch (e) {
     console.error("whatsapp notify error", e);
-    return NextResponse.json({ ok: false, reason: "send_failed" });
+    return NextResponse.json({
+      ok: false,
+      reason: "send_failed",
+      to: phone,
+      debug: e instanceof Error ? e.message.slice(0, 400) : String(e),
+    });
   }
 }
