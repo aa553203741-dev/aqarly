@@ -38,16 +38,15 @@ export default function SignupPage() {
     } catch (ex) {
       setLoading(false);
       console.error("signup exception", ex);
-      setError("استثناء: " + (ex instanceof Error ? ex.message : String(ex)));
+      setError("تعذّر إنشاء الحساب، حاول لاحقًا");
       return;
     }
     setLoading(false);
     if (error) {
-      console.error("signup error", error);
       setError(
         error.message.includes("already")
           ? "هذا البريد مسجّل مسبقًا"
-          : "تعذّر: " + error.message,
+          : "تعذّر إنشاء الحساب",
       );
       return;
     }
