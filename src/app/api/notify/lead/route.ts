@@ -26,23 +26,34 @@ export async function POST(request: Request) {
     return NextResponse.json({ ok: false, reason: "no_broker" });
   }
 
-  const admin = createAdminClient();
-  const { data: profile, error: dbError } = await admin
-    .from("profiles")
-    .select("phone, full_name")
-    .eq("id", brokerId)
-    .maybeSingle();
+  // نُفضّل جوال الوسيط المُرسَل مباشرة من تريغر Supabase (لا يحتاج service_role).
+  // وإن لم يُرسَل، نرجع لاستعلام بمفتاح الأدمن كخيار احتياطي.
+  let rawPhone: string | null = row.broker_phone ?? null;
+  let brokerName: string | null = row.broker_name ?? null;
+  let dbErr: string | null = null;
 
-  const phone = normalizeSaudiPhone(profile?.phone ?? "");
+  if (!rawPhone) {
+    try {
+      const admin = createAdminClient();
+      const { data: profile, error } = await admin
+        .from("profiles")
+        .select("phone, full_name")
+        .eq("id", brokerId)
+        .maybeSingle();
+      rawPhone = profile?.phone ?? null;
+      brokerName = brokerName ?? profile?.full_name ?? null;
+      dbErr = error?.message ?? null;
+    } catch (e) {
+      dbErr = e instanceof Error ? e.message : String(e);
+    }
+  }
+
+  const phone = normalizeSaudiPhone(rawPhone ?? "");
   if (!phone) {
     return NextResponse.json({
       ok: false,
       reason: "no_phone",
-      debug: {
-        dbError: dbError?.message ?? null,
-        profileFound: !!profile,
-        rawPhone: profile?.phone ?? null,
-      },
+      debug: { dbError: dbErr, rawPhone },
     });
   }
 
