@@ -29,32 +29,24 @@ export async function POST(request: Request) {
   // نُفضّل جوال الوسيط المُرسَل مباشرة من تريغر Supabase (لا يحتاج service_role).
   // وإن لم يُرسَل، نرجع لاستعلام بمفتاح الأدمن كخيار احتياطي.
   let rawPhone: string | null = row.broker_phone ?? null;
-  let brokerName: string | null = row.broker_name ?? null;
-  let dbErr: string | null = null;
 
   if (!rawPhone) {
     try {
       const admin = createAdminClient();
-      const { data: profile, error } = await admin
+      const { data: profile } = await admin
         .from("profiles")
-        .select("phone, full_name")
+        .select("phone")
         .eq("id", brokerId)
         .maybeSingle();
       rawPhone = profile?.phone ?? null;
-      brokerName = brokerName ?? profile?.full_name ?? null;
-      dbErr = error?.message ?? null;
-    } catch (e) {
-      dbErr = e instanceof Error ? e.message : String(e);
+    } catch {
+      /* الأدمن غير مُهيّأ — نتجاهل بهدوء */
     }
   }
 
   const phone = normalizeSaudiPhone(rawPhone ?? "");
   if (!phone) {
-    return NextResponse.json({
-      ok: false,
-      reason: "no_phone",
-      debug: { dbError: dbErr, rawPhone },
-    });
+    return NextResponse.json({ ok: false, reason: "no_phone" });
   }
 
   const propType =
@@ -71,14 +63,9 @@ export async function POST(request: Request) {
 
   try {
     const result = await sendLeadWhatsApp(phone, summary);
-    return NextResponse.json({ ok: result.sent, reason: result.reason, to: phone });
+    return NextResponse.json({ ok: result.sent, reason: result.reason });
   } catch (e) {
     console.error("whatsapp notify error", e);
-    return NextResponse.json({
-      ok: false,
-      reason: "send_failed",
-      to: phone,
-      debug: e instanceof Error ? e.message.slice(0, 400) : String(e),
-    });
+    return NextResponse.json({ ok: false, reason: "send_failed" });
   }
 }
