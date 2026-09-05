@@ -17,25 +17,41 @@ export default function SignupPage() {
     const fd = new FormData(e.currentTarget);
     setLoading(true);
     setError("");
-    const supabase = createClient();
-    const email = (fd.get("email") as string).trim();
-    const { data, error } = await supabase.auth.signUp({
-      email,
-      password: fd.get("password") as string,
-      options: {
-        data: {
-          full_name: (fd.get("full_name") as string).trim(),
-          phone: ((fd.get("phone") as string) || "").trim(),
+    type SignUpResult = Awaited<
+      ReturnType<ReturnType<typeof createClient>["auth"]["signUp"]>
+    >;
+    let data: SignUpResult["data"] | undefined;
+    let error: SignUpResult["error"] | undefined;
+    try {
+      const supabase = createClient();
+      const email = (fd.get("email") as string).trim();
+      ({ data, error } = await supabase.auth.signUp({
+        email,
+        password: fd.get("password") as string,
+        options: {
+          data: {
+            full_name: (fd.get("full_name") as string).trim(),
+            phone: ((fd.get("phone") as string) || "").trim(),
+          },
         },
-      },
-    });
-    setLoading(false);
-    if (error) {
-      setError(error.message.includes("already")
-        ? "هذا البريد مسجّل مسبقًا"
-        : "تعذّر إنشاء الحساب");
+      }));
+    } catch (ex) {
+      setLoading(false);
+      console.error("signup exception", ex);
+      setError("استثناء: " + (ex instanceof Error ? ex.message : String(ex)));
       return;
     }
+    setLoading(false);
+    if (error) {
+      console.error("signup error", error);
+      setError(
+        error.message.includes("already")
+          ? "هذا البريد مسجّل مسبقًا"
+          : "تعذّر: " + error.message,
+      );
+      return;
+    }
+    if (!data) return;
     // إن لم تُنشأ جلسة فورية => التأكيد بالبريد مفعّل
     if (!data.session) {
       setNeedConfirm(true);
