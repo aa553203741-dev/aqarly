@@ -31,8 +31,16 @@ export async function POST(request: Request) {
       : Number(map.get("premium_monthly_price") ?? 29);
   const amount = Math.round(priceSar * 100); // هللات
 
+  // رابط العودة: نُفضّل أصل الطلب الفعلي (يعمل على أي نطاق ونشر)،
+  // ثم متغيّر البيئة إن كان صالحًا، وأخيرًا أصل عنوان الطلب.
+  const originHeader = request.headers.get("origin");
+  const envSite = process.env.NEXT_PUBLIC_SITE_URL;
   const siteUrl =
-    process.env.NEXT_PUBLIC_SITE_URL ?? new URL(request.url).origin;
+    (originHeader && originHeader.startsWith("http") ? originHeader : null) ??
+    (envSite && envSite.startsWith("https://") && !envSite.includes("example.com")
+      ? envSite
+      : null) ??
+    new URL(request.url).origin;
 
   // 3) إنشاء الفاتورة لدى Moyasar
   let invoice;
