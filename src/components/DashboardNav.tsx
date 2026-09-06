@@ -8,21 +8,7 @@ import { Logo } from "@/components/Logo";
 import type { Plan } from "@/lib/types";
 
 type NavLink = { href: string; label: string; icon: string; exact?: boolean };
-
-const LINKS: NavLink[] = [
-  { href: "/dashboard", label: "نظرة عامة", icon: "🏠", exact: true },
-  { href: "/dashboard/inventory", label: "التغطية", icon: "🗺️" },
-  { href: "/dashboard/search", label: "بحث", icon: "🔎" },
-  { href: "/dashboard/reservations", label: "حجوزاتي", icon: "🔖" },
-  { href: "/dashboard/projects", label: "المشاريع", icon: "🏢" },
-  { href: "/dashboard/developers", label: "المطوّرون", icon: "🏗️" },
-  { href: "/dashboard/leads", label: "طلبات العملاء", icon: "📥" },
-  { href: "/dashboard/listings", label: "عروضي", icon: "🏷️" },
-  { href: "/dashboard/matching", label: "المطابقة", icon: "🎯" },
-  { href: "/dashboard/reports", label: "التقارير", icon: "📊" },
-  { href: "/dashboard/referrals", label: "الدعوات", icon: "🎁" },
-  { href: "/dashboard/settings", label: "الإعدادات", icon: "⚙️" },
-];
+type NavSection = { title: string | null; links: NavLink[] };
 
 export function DashboardNav({
   name,
@@ -46,39 +32,83 @@ export function DashboardNav({
     router.refresh();
   }
 
-  const links = [...LINKS];
+  const dealsLinks: NavLink[] = [
+    { href: "/dashboard/reservations", label: "حجوزاتي", icon: "🔖" },
+  ];
   if (isStaff || isAdmin) {
-    const i = links.findIndex((l) => l.href === "/dashboard/reservations");
-    links.splice(i + 1, 0, {
-      href: "/dashboard/deals",
-      label: "المعاملات",
-      icon: "💼",
-    });
+    dealsLinks.push({ href: "/dashboard/deals", label: "المعاملات", icon: "💼" });
   }
+
+  const sections: NavSection[] = [
+    {
+      title: null,
+      links: [{ href: "/dashboard", label: "نظرة عامة", icon: "🏠", exact: true }],
+    },
+    {
+      title: "المخزون",
+      links: [
+        { href: "/dashboard/inventory", label: "التغطية", icon: "🗺️" },
+        { href: "/dashboard/search", label: "بحث", icon: "🔎" },
+        { href: "/dashboard/projects", label: "المشاريع", icon: "🏢" },
+        { href: "/dashboard/developers", label: "المطوّرون", icon: "🏗️" },
+      ],
+    },
+    { title: "الصفقات", links: dealsLinks },
+    {
+      title: "العملاء",
+      links: [
+        { href: "/dashboard/leads", label: "طلبات العملاء", icon: "📥" },
+        { href: "/dashboard/listings", label: "عروضي", icon: "🏷️" },
+        { href: "/dashboard/matching", label: "المطابقة", icon: "🎯" },
+      ],
+    },
+    {
+      title: "أخرى",
+      links: [
+        { href: "/dashboard/reports", label: "التقارير", icon: "📊" },
+        { href: "/dashboard/referrals", label: "الدعوات", icon: "🎁" },
+        { href: "/dashboard/settings", label: "الإعدادات", icon: "⚙️" },
+      ],
+    },
+  ];
 
   const isActive = (l: NavLink) =>
     l.exact ? pathname === l.href : pathname.startsWith(l.href);
 
   const NavItems = ({ onClick }: { onClick?: () => void }) => (
-    <nav className="flex flex-col gap-1 p-2">
-      {links.map((l) => {
-        const active = isActive(l);
-        return (
-          <Link
-            key={l.href}
-            href={l.href}
-            onClick={onClick}
-            className="no-underline flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-bold"
-            style={{
-              background: active ? "var(--brand-soft)" : "transparent",
-              color: active ? "var(--brand-dark)" : "var(--muted)",
-            }}
-          >
-            <span className="text-lg w-6 text-center">{l.icon}</span>
-            <span>{l.label}</span>
-          </Link>
-        );
-      })}
+    <nav className="flex flex-col p-2">
+      {sections.map((sec, si) => (
+        <div key={si} className={si > 0 ? "mt-3" : ""}>
+          {sec.title && (
+            <div
+              className="px-3 pb-1 text-[11px] font-bold tracking-wide"
+              style={{ color: "var(--muted)", opacity: 0.7 }}
+            >
+              {sec.title}
+            </div>
+          )}
+          <div className="flex flex-col gap-0.5">
+            {sec.links.map((l) => {
+              const active = isActive(l);
+              return (
+                <Link
+                  key={l.href}
+                  href={l.href}
+                  onClick={onClick}
+                  className="no-underline flex items-center gap-3 px-3 py-2 rounded-xl text-sm font-bold"
+                  style={{
+                    background: active ? "var(--brand-soft)" : "transparent",
+                    color: active ? "var(--brand-dark)" : "var(--muted)",
+                  }}
+                >
+                  <span className="text-lg w-6 text-center">{l.icon}</span>
+                  <span>{l.label}</span>
+                </Link>
+              );
+            })}
+          </div>
+        </div>
+      ))}
     </nav>
   );
 
