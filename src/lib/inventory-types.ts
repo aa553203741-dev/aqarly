@@ -55,6 +55,45 @@ export interface Project {
   district?: { city: string; zone: string; name: string } | null;
 }
 
+export interface UnitModel {
+  id: string;
+  org_id: string;
+  project_id: string;
+  name: string;
+  bedrooms: number | null;
+  area: number | null;
+  bathrooms: number | null;
+  majlis: boolean;
+  hall: boolean;
+  kitchen: boolean;
+  maid_room: boolean;
+  balcony: boolean;
+  floor_plan_url: string | null;
+  extra_features: Record<string, unknown>;
+  notes: string;
+  created_at: string;
+}
+
+export interface Unit {
+  id: string;
+  org_id: string;
+  project_id: string;
+  model_id: string | null;
+  unit_no: string;
+  floor: number | null;
+  building_no: string | null;
+  price: number | null;
+  discount_price: number | null;
+  status: UnitStatus;
+  view: string | null;
+  direction: string | null;
+  parking_no: string | null;
+  storage_no: string | null;
+  commission_amount: number | null;
+  notes: string;
+  updated_at: string;
+}
+
 export interface UserPermissions {
   user_id: string;
   can_reserve: boolean;
