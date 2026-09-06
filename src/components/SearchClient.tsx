@@ -4,6 +4,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { PROJECT_STATUS, UNIT_STATUS } from "@/lib/inventory-constants";
 import { ReserveModal, type ReserveTarget } from "@/components/ReserveModal";
+import { ShareButton } from "@/components/ShareButton";
 import type {
   Developer,
   District,
@@ -255,6 +256,12 @@ export function SearchClient({
                       📐 المخطط
                     </a>
                   )}
+                  <ShareButton
+                    unitId={r.id}
+                    summary={`${r.project_name} — ${r.bedrooms ?? ""} غرف${
+                      r.area ? ` · ${r.area} م²` : ""
+                    }${r.price != null ? ` · ${Number(r.price).toLocaleString("en-US")} ر.س` : ""}`}
+                  />
                   {canReserve && r.status === "available" && (
                     <button
                       onClick={() =>
