@@ -1,24 +1,27 @@
 "use client";
 
+import { useState } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 import { Logo } from "@/components/Logo";
 import type { Plan } from "@/lib/types";
 
-const LINKS = [
-  { href: "/dashboard", label: "نظرة عامة", exact: true },
-  { href: "/dashboard/inventory", label: "التغطية" },
-  { href: "/dashboard/search", label: "بحث" },
-  { href: "/dashboard/reservations", label: "حجوزاتي" },
-  { href: "/dashboard/projects", label: "المشاريع" },
-  { href: "/dashboard/developers", label: "المطوّرون" },
-  { href: "/dashboard/leads", label: "طلبات العملاء" },
-  { href: "/dashboard/listings", label: "عروضي" },
-  { href: "/dashboard/matching", label: "المطابقة" },
-  { href: "/dashboard/reports", label: "التقارير" },
-  { href: "/dashboard/referrals", label: "الدعوات" },
-  { href: "/dashboard/settings", label: "الإعدادات" },
+type NavLink = { href: string; label: string; icon: string; exact?: boolean };
+
+const LINKS: NavLink[] = [
+  { href: "/dashboard", label: "نظرة عامة", icon: "🏠", exact: true },
+  { href: "/dashboard/inventory", label: "التغطية", icon: "🗺️" },
+  { href: "/dashboard/search", label: "بحث", icon: "🔎" },
+  { href: "/dashboard/reservations", label: "حجوزاتي", icon: "🔖" },
+  { href: "/dashboard/projects", label: "المشاريع", icon: "🏢" },
+  { href: "/dashboard/developers", label: "المطوّرون", icon: "🏗️" },
+  { href: "/dashboard/leads", label: "طلبات العملاء", icon: "📥" },
+  { href: "/dashboard/listings", label: "عروضي", icon: "🏷️" },
+  { href: "/dashboard/matching", label: "المطابقة", icon: "🎯" },
+  { href: "/dashboard/reports", label: "التقارير", icon: "📊" },
+  { href: "/dashboard/referrals", label: "الدعوات", icon: "🎁" },
+  { href: "/dashboard/settings", label: "الإعدادات", icon: "⚙️" },
 ];
 
 export function DashboardNav({
@@ -34,6 +37,7 @@ export function DashboardNav({
 }) {
   const pathname = usePathname();
   const router = useRouter();
+  const [open, setOpen] = useState(false);
 
   async function signOut() {
     const supabase = createClient();
@@ -45,57 +49,120 @@ export function DashboardNav({
   const links = [...LINKS];
   if (isStaff || isAdmin) {
     const i = links.findIndex((l) => l.href === "/dashboard/reservations");
-    links.splice(i + 1, 0, { href: "/dashboard/deals", label: "المعاملات" });
+    links.splice(i + 1, 0, {
+      href: "/dashboard/deals",
+      label: "المعاملات",
+      icon: "💼",
+    });
   }
-  // «الاشتراك» و«لوحة الأدمن» أصبحا داخل «الإعدادات»
+
+  const isActive = (l: NavLink) =>
+    l.exact ? pathname === l.href : pathname.startsWith(l.href);
+
+  const NavItems = ({ onClick }: { onClick?: () => void }) => (
+    <nav className="flex flex-col gap-1 p-2">
+      {links.map((l) => {
+        const active = isActive(l);
+        return (
+          <Link
+            key={l.href}
+            href={l.href}
+            onClick={onClick}
+            className="no-underline flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-bold"
+            style={{
+              background: active ? "var(--brand-soft)" : "transparent",
+              color: active ? "var(--brand-dark)" : "var(--muted)",
+            }}
+          >
+            <span className="text-lg w-6 text-center">{l.icon}</span>
+            <span>{l.label}</span>
+          </Link>
+        );
+      })}
+    </nav>
+  );
+
+  const UserBox = () => (
+    <div className="p-3 border-t" style={{ borderColor: "var(--border)" }}>
+      <div className="flex items-center gap-2 mb-2">
+        <span
+          className="badge"
+          style={{
+            background: plan === "premium" ? "var(--gold)" : "var(--brand-soft)",
+            color: plan === "premium" ? "#fff" : "var(--brand-dark)",
+          }}
+        >
+          {plan === "premium" ? "★ مميّز" : "مجاني"}
+        </span>
+        <span className="text-sm font-bold truncate">{name}</span>
+      </div>
+      <button onClick={signOut} className="btn btn-ghost w-full !py-1.5 text-sm">
+        تسجيل الخروج
+      </button>
+    </div>
+  );
 
   return (
-    <header
-      className="no-print w-full border-b sticky top-0 z-10"
-      style={{ background: "var(--surface)", borderColor: "var(--border)" }}
-    >
-      <div className="max-w-[1000px] mx-auto px-4">
-        <div className="flex items-center justify-between h-14">
+    <>
+      {/* ===== شريط جانبي ثابت على اليمين (سطح المكتب) ===== */}
+      <aside
+        className="no-print hidden sm:flex flex-col fixed top-0 right-0 h-full w-56 border-l z-20"
+        style={{ background: "var(--surface)", borderColor: "var(--border)" }}
+      >
+        <div className="p-4 border-b" style={{ borderColor: "var(--border)" }}>
           <Link href="/dashboard" className="no-underline">
-            <Logo size={32} />
+            <Logo size={30} />
           </Link>
-          <div className="flex items-center gap-3">
-            <span
-              className="badge"
-              style={{
-                background: plan === "premium" ? "var(--gold)" : "var(--brand-soft)",
-                color: plan === "premium" ? "#fff" : "var(--brand-dark)",
-              }}
+        </div>
+        <div className="flex-1 overflow-y-auto">
+          <NavItems />
+        </div>
+        <UserBox />
+      </aside>
+
+      {/* ===== شريط علوي للجوال ===== */}
+      <header
+        className="no-print sm:hidden sticky top-0 z-20 border-b flex items-center justify-between px-4 h-14"
+        style={{ background: "var(--surface)", borderColor: "var(--border)" }}
+      >
+        <Link href="/dashboard" className="no-underline">
+          <Logo size={28} />
+        </Link>
+        <button
+          onClick={() => setOpen(true)}
+          aria-label="القائمة"
+          className="text-2xl leading-none"
+          style={{ color: "var(--text)" }}
+        >
+          ☰
+        </button>
+      </header>
+
+      {/* ===== درج الجوال المنزلق ===== */}
+      {open && (
+        <div className="sm:hidden fixed inset-0 z-30" onClick={() => setOpen(false)}>
+          <div className="absolute inset-0" style={{ background: "rgba(0,0,0,.45)" }} />
+          <div
+            className="absolute top-0 right-0 h-full w-64 flex flex-col"
+            style={{ background: "var(--surface)" }}
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div
+              className="p-4 border-b flex items-center justify-between"
+              style={{ borderColor: "var(--border)" }}
             >
-              {plan === "premium" ? "★ مميّز" : "مجاني"}
-            </span>
-            <span className="text-sm font-bold hidden sm:inline">{name}</span>
-            <button onClick={signOut} className="btn btn-ghost !py-1.5 !px-3 text-sm">
-              خروج
-            </button>
+              <Logo size={28} />
+              <button onClick={() => setOpen(false)} className="text-xl">
+                ✕
+              </button>
+            </div>
+            <div className="flex-1 overflow-y-auto">
+              <NavItems onClick={() => setOpen(false)} />
+            </div>
+            <UserBox />
           </div>
         </div>
-        <nav className="flex gap-1 overflow-x-auto pb-2 -mb-px">
-          {links.map((l) => {
-            const active = l.exact
-              ? pathname === l.href
-              : pathname.startsWith(l.href);
-            return (
-              <Link
-                key={l.href}
-                href={l.href}
-                className="no-underline whitespace-nowrap px-3 py-1.5 rounded-lg text-sm font-bold"
-                style={{
-                  background: active ? "var(--brand-soft)" : "transparent",
-                  color: active ? "var(--brand-dark)" : "var(--muted)",
-                }}
-              >
-                {l.label}
-              </Link>
-            );
-          })}
-        </nav>
-      </div>
-    </header>
+      )}
+    </>
   );
 }

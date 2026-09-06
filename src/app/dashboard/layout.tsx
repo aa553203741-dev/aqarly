@@ -10,16 +10,16 @@ export default async function DashboardLayout({
   const p = me.profile;
 
   return (
-    <div className="flex-1 flex flex-col">
+    <div className="flex-1">
       <DashboardNav
         name={p?.full_name || p?.email || "وسيط"}
         plan={p?.plan || "free"}
         isAdmin={me.isAdmin}
         isStaff={me.canProcessPayments || me.canCloseDeals}
       />
-      <div className="flex-1 w-full max-w-[1000px] mx-auto px-4 py-6">
-        {children}
-      </div>
+      <main className="sm:mr-56 min-h-screen">
+        <div className="w-full max-w-[1000px] mx-auto px-4 py-6">{children}</div>
+      </main>
     </div>
   );
 }
