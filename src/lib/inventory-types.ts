@@ -114,6 +114,33 @@ export interface ProjectStat {
   max_bed: number | null;
 }
 
+export interface UnitSearchRow {
+  id: string;
+  unit_no: string;
+  floor: number | null;
+  price: number | null;
+  discount_price: number | null;
+  status: UnitStatus;
+  view: string | null;
+  direction: string | null;
+  commission_amount: number | null;
+  bedrooms: number | null;
+  area: number | null;
+  bathrooms: number | null;
+  model_name: string | null;
+  floor_plan_url: string | null;
+  project_id: string;
+  project_name: string;
+  project_status: ProjectStatus;
+  cover_image: string | null;
+  developer_id: string | null;
+  developer_name: string | null;
+  district_id: string | null;
+  city: string | null;
+  zone: string | null;
+  district_name: string | null;
+}
+
 export interface UserPermissions {
   user_id: string;
   can_reserve: boolean;

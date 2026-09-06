@@ -1,17 +1,21 @@
-export default function SearchPage() {
+import { createClient } from "@/lib/supabase/server";
+import { SearchClient } from "@/components/SearchClient";
+import type { Developer, District } from "@/lib/inventory-types";
+
+export default async function SearchPage() {
+  const supabase = await createClient();
+  const [{ data: districts }, { data: developers }] = await Promise.all([
+    supabase.from("districts").select("*").order("city"),
+    supabase.from("developers").select("*").order("name"),
+  ]);
+
   return (
-    <div className="max-w-[560px]">
+    <div>
       <h1 className="text-2xl font-extrabold mt-0 mb-4">البحث الذكي</h1>
-      <div className="card p-8 text-center" style={{ color: "var(--muted)" }}>
-        <div className="text-3xl mb-2">🔎</div>
-        <div className="font-bold" style={{ color: "var(--text)" }}>
-          البحث والفلترة السريعة
-        </div>
-        <p className="text-sm mt-1">
-          البحث عبر كل المشاريع والمطوّرين مع الفلاتر والمقارنة — يأتي في المرحلة
-          القادمة.
-        </p>
-      </div>
+      <SearchClient
+        districts={(districts as District[]) ?? []}
+        developers={(developers as Developer[]) ?? []}
+      />
     </div>
   );
 }
