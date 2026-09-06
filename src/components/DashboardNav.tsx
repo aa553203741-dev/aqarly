@@ -26,10 +26,12 @@ export function DashboardNav({
   name,
   plan,
   isAdmin,
+  isStaff = false,
 }: {
   name: string;
   plan: Plan;
   isAdmin: boolean;
+  isStaff?: boolean;
 }) {
   const pathname = usePathname();
   const router = useRouter();
@@ -41,9 +43,12 @@ export function DashboardNav({
     router.refresh();
   }
 
-  const links = isAdmin
-    ? [...LINKS, { href: "/admin", label: "لوحة الأدمن" }]
-    : LINKS;
+  let links = [...LINKS];
+  if (isStaff || isAdmin) {
+    const i = links.findIndex((l) => l.href === "/dashboard/reservations");
+    links.splice(i + 1, 0, { href: "/dashboard/deals", label: "المعاملات" });
+  }
+  if (isAdmin) links = [...links, { href: "/admin", label: "لوحة الأدمن" }];
 
   return (
     <header
