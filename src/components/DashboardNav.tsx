@@ -5,6 +5,7 @@ import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 import { Logo } from "@/components/Logo";
+import { InstallButton } from "@/components/InstallButton";
 import type { Plan } from "@/lib/types";
 
 type NavLink = { href: string; label: string; icon: string; exact?: boolean };
@@ -126,6 +127,9 @@ export function DashboardNav({
           {plan === "premium" ? "★ مميّز" : "مجاني"}
         </span>
         <span className="text-sm font-bold truncate">{name}</span>
+      </div>
+      <div className="mb-2">
+        <InstallButton />
       </div>
       <button onClick={signOut} className="btn btn-ghost w-full !py-1.5 text-sm">
         تسجيل الخروج

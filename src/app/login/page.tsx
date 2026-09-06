@@ -2,6 +2,7 @@ import { Suspense } from "react";
 import Link from "next/link";
 import { Logo } from "@/components/Logo";
 import { LoginForm } from "@/components/LoginForm";
+import { InstallButton } from "@/components/InstallButton";
 
 export default function LoginPage() {
   return (
@@ -24,6 +25,9 @@ export default function LoginPage() {
             أنشئ حسابًا
           </Link>
         </p>
+        <div className="mt-4">
+          <InstallButton className="btn btn-ghost w-full text-sm" />
+        </div>
       </div>
     </main>
   );
