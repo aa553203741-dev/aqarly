@@ -49,6 +49,7 @@ export function DashboardNav({
       links: [
         { href: "/dashboard/inventory", label: "التغطية", icon: "🗺️" },
         { href: "/dashboard/search", label: "بحث", icon: "🔎" },
+        { href: "/dashboard/map", label: "الخريطة", icon: "📍" },
         { href: "/dashboard/projects", label: "المشاريع", icon: "🏢" },
         { href: "/dashboard/developers", label: "المطوّرون", icon: "🏗️" },
       ],

@@ -5,6 +5,7 @@ import Link from "next/link";
 import { createClient } from "@/lib/supabase/client";
 import { CITIES } from "@/lib/constants";
 import { PROJECT_STATUS } from "@/lib/inventory-constants";
+import { ImageUploader } from "@/components/ImageUploader";
 import type { Developer, District, Project } from "@/lib/inventory-types";
 
 function statusMeta(v: string) {
@@ -248,15 +249,11 @@ export function ProjectsManager({
             </div>
           </div>
 
-          <div>
-            <label className="label">رابط صورة الغلاف</label>
-            <input
-              className="field"
-              style={{ direction: "ltr", textAlign: "right" }}
-              value={form.cover_image}
-              onChange={(e) => setForm({ ...form, cover_image: e.target.value })}
-            />
-          </div>
+          <ImageUploader
+            label="صورة الغلاف"
+            value={form.cover_image || null}
+            onUploaded={(url) => setForm({ ...form, cover_image: url })}
+          />
           <div>
             <label className="label">الوصف</label>
             <textarea
