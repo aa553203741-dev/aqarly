@@ -18,7 +18,6 @@ const LINKS = [
   { href: "/dashboard/matching", label: "المطابقة" },
   { href: "/dashboard/reports", label: "التقارير" },
   { href: "/dashboard/referrals", label: "الدعوات" },
-  { href: "/dashboard/upgrade", label: "الاشتراك" },
   { href: "/dashboard/settings", label: "الإعدادات" },
 ];
 
@@ -43,12 +42,12 @@ export function DashboardNav({
     router.refresh();
   }
 
-  let links = [...LINKS];
+  const links = [...LINKS];
   if (isStaff || isAdmin) {
     const i = links.findIndex((l) => l.href === "/dashboard/reservations");
     links.splice(i + 1, 0, { href: "/dashboard/deals", label: "المعاملات" });
   }
-  if (isAdmin) links = [...links, { href: "/admin", label: "لوحة الأدمن" }];
+  // «الاشتراك» و«لوحة الأدمن» أصبحا داخل «الإعدادات»
 
   return (
     <header
