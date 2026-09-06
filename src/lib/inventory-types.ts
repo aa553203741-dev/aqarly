@@ -141,6 +141,32 @@ export interface UnitSearchRow {
   district_name: string | null;
 }
 
+export interface Reservation {
+  id: string;
+  org_id: string;
+  unit_id: string;
+  project_id: string;
+  marketer_id: string;
+  client_lead_id: string | null;
+  client_name: string | null;
+  client_phone: string | null;
+  assigned_staff_id: string | null;
+  stage: ReservationStage;
+  agreed_price: number | null;
+  discount: number | null;
+  commission_amount: number | null;
+  commission_status: "pending" | "earned" | "paid";
+  reserved_at: string;
+  closed_at: string | null;
+  cancelled_reason: string | null;
+  notes: string;
+  created_at: string;
+  // منضمّة
+  unit?: { unit_no: string } | null;
+  project?: { name: string } | null;
+  marketer?: { full_name: string | null; email: string | null } | null;
+}
+
 export interface UserPermissions {
   user_id: string;
   can_reserve: boolean;

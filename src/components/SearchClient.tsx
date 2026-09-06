@@ -3,6 +3,7 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { PROJECT_STATUS, UNIT_STATUS } from "@/lib/inventory-constants";
+import { ReserveModal, type ReserveTarget } from "@/components/ReserveModal";
 import type {
   Developer,
   District,
@@ -43,9 +44,11 @@ function statusMeta(v: string) {
 export function SearchClient({
   districts,
   developers,
+  canReserve,
 }: {
   districts: District[];
   developers: Developer[];
+  canReserve: boolean;
 }) {
   const [f, setF] = useState<Filters>({ ...EMPTY });
   const [rows, setRows] = useState<UnitSearchRow[]>([]);
@@ -53,6 +56,7 @@ export function SearchClient({
   const [selected, setSelected] = useState<UnitSearchRow[]>([]);
   const [showCompare, setShowCompare] = useState(false);
   const [showFilters, setShowFilters] = useState(true);
+  const [reserveTarget, setReserveTarget] = useState<ReserveTarget | null>(null);
   const timer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const cities = useMemo(
@@ -251,6 +255,20 @@ export function SearchClient({
                       📐 المخطط
                     </a>
                   )}
+                  {canReserve && r.status === "available" && (
+                    <button
+                      onClick={() =>
+                        setReserveTarget({
+                          id: r.id,
+                          price: r.price,
+                          label: `${r.project_name} — وحدة ${r.unit_no}`,
+                        })
+                      }
+                      className="btn btn-primary !py-1.5 !px-3 text-sm"
+                    >
+                      احجز
+                    </button>
+                  )}
                 </div>
               </div>
             );
@@ -282,6 +300,18 @@ export function SearchClient({
 
       {showCompare && (
         <CompareModal rows={selected} onClose={() => setShowCompare(false)} />
+      )}
+
+      {reserveTarget && (
+        <ReserveModal
+          unit={reserveTarget}
+          onClose={() => setReserveTarget(null)}
+          onReserved={() => {
+            // إزالة الوحدة المحجوزة من نتائج «المتاح»
+            setRows((rs) => rs.filter((x) => x.id !== reserveTarget.id));
+            setReserveTarget(null);
+          }}
+        />
       )}
     </div>
   );
