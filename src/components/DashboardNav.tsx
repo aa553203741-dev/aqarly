@@ -8,6 +8,7 @@ import type { Plan } from "@/lib/types";
 
 const LINKS = [
   { href: "/dashboard", label: "نظرة عامة", exact: true },
+  { href: "/dashboard/inventory", label: "التغطية" },
   { href: "/dashboard/projects", label: "المشاريع" },
   { href: "/dashboard/developers", label: "المطوّرون" },
   { href: "/dashboard/leads", label: "طلبات العملاء" },

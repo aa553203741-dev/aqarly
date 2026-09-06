@@ -94,6 +94,26 @@ export interface Unit {
   updated_at: string;
 }
 
+export interface DistrictStat {
+  district_id: string;
+  city: string;
+  zone: string;
+  district_name: string;
+  projects_count: number;
+  available_units: number;
+}
+
+export interface ProjectStat {
+  project_id: string;
+  total_units: number;
+  available_units: number;
+  start_price: number | null;
+  min_area: number | null;
+  max_area: number | null;
+  min_bed: number | null;
+  max_bed: number | null;
+}
+
 export interface UserPermissions {
   user_id: string;
   can_reserve: boolean;
