@@ -50,6 +50,9 @@ export default async function AdminPage() {
       <div className="flex items-center justify-between mb-6">
         <Logo size={32} />
         <div className="flex gap-2">
+          <Link href="/admin/team" className="btn btn-primary text-sm">
+            👥 الفريق
+          </Link>
           <Link href="/admin/revenue" className="btn btn-primary text-sm">
             📊 الإيرادات
           </Link>
