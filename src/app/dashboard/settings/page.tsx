@@ -1,18 +1,11 @@
 import Link from "next/link";
-import { createClient } from "@/lib/supabase/server";
 import { getMe } from "@/lib/me";
 import { SettingsForm } from "@/components/SettingsForm";
 import type { Profile } from "@/lib/types";
 
 export default async function SettingsPage() {
-  const supabase = await createClient();
   const me = await getMe();
-  const { data } = await supabase
-    .from("profiles")
-    .select("*")
-    .eq("id", me?.userId ?? "")
-    .maybeSingle();
-
+  const data = me?.profile ?? null;
   const isAdmin = me?.isAdmin ?? false;
 
   const links: { href: string; icon: string; label: string; desc: string }[] = [

@@ -1,9 +1,11 @@
+import { cache } from "react";
 import { createClient } from "@/lib/supabase/server";
 import type { Profile } from "@/lib/types";
 import type { UserPermissions } from "@/lib/inventory-types";
 
 // يحمّل المستخدم الحالي + دوره + صلاحياته (للخادم — لتقييد الواجهة).
-export async function getMe() {
+// مغلّف بـcache: لا يتكرّر الاستعلام إن استُدعي أكثر من مرة في نفس الطلب.
+export const getMe = cache(async function getMe() {
   const supabase = await createClient();
   const {
     data: { user },
@@ -33,4 +35,4 @@ export async function getMe() {
     canProcessPayments: isAdmin || pr?.can_process_payments === true,
     canCloseDeals: isAdmin || pr?.can_close_deals === true,
   };
-}
+});
