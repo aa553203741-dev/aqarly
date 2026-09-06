@@ -19,6 +19,7 @@ export default async function SettingsPage() {
   if (isAdmin) {
     links.push(
       { href: "/admin", icon: "🛠", label: "لوحة الأدمن", desc: "إدارة المستخدمين والإعدادات" },
+      { href: "/admin/analytics", icon: "📈", label: "التحليلات", desc: "المخزون والمبيعات والعمولات" },
       { href: "/admin/revenue", icon: "📊", label: "الإيرادات", desc: "المدفوعات والاشتراكات" },
     );
   }
