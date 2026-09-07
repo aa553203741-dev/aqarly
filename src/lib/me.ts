@@ -36,3 +36,15 @@ export const getMe = cache(async function getMe() {
     canCloseDeals: isAdmin || pr?.can_close_deals === true,
   };
 });
+
+// أحياء تغطية المستخدم الحالي: null = بلا قيد (أدمن أو بلا تغطية = يرى الكل)
+export const coveredDistrictIds = cache(async function coveredDistrictIds() {
+  const me = await getMe();
+  if (!me || me.isAdmin) return null;
+  const supabase = await createClient();
+  const { data } = await supabase
+    .from("marketer_coverage")
+    .select("district_id");
+  const ids = ((data as { district_id: string }[]) ?? []).map((c) => c.district_id);
+  return ids.length > 0 ? ids : null;
+});

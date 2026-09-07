@@ -1,13 +1,14 @@
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
+import { coveredDistrictIds } from "@/lib/me";
 import type { DistrictStat } from "@/lib/inventory-types";
 
 export default async function InventoryHomePage() {
   const supabase = await createClient();
-  const { data } = await supabase
-    .from("district_stats")
-    .select("*")
-    .order("city");
+  const covered = await coveredDistrictIds();
+  let query = supabase.from("district_stats").select("*").order("city");
+  if (covered) query = query.in("district_id", covered);
+  const { data } = await query;
 
   const stats = (data as DistrictStat[]) ?? [];
 

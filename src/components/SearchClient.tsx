@@ -47,10 +47,12 @@ export function SearchClient({
   districts,
   developers,
   canReserve,
+  coverageIds = null,
 }: {
   districts: District[];
   developers: Developer[];
   canReserve: boolean;
+  coverageIds?: string[] | null;
 }) {
   const [f, setF] = useState<Filters>({ ...EMPTY });
   const [rows, setRows] = useState<UnitSearchRow[]>([]);
@@ -78,6 +80,7 @@ export function SearchClient({
     setLoading(true);
     const supabase = createClient();
     let q = supabase.from("units_search").select("*");
+    if (coverageIds && coverageIds.length) q = q.in("district_id", coverageIds);
     if (f.availableOnly) q = q.eq("status", "available");
     if (f.city) q = q.eq("city", f.city);
     if (f.districtId) q = q.eq("district_id", f.districtId);
