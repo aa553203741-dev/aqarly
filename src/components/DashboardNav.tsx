@@ -5,6 +5,7 @@ import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 import { Logo } from "@/components/Logo";
+import { Icon } from "@/components/Icon";
 import { InstallButton } from "@/components/InstallButton";
 import { NotificationsBell } from "@/components/NotificationsBell";
 import type { Plan } from "@/lib/types";
@@ -35,43 +36,43 @@ export function DashboardNav({
   }
 
   const dealsLinks: NavLink[] = [
-    { href: "/dashboard/reservations", label: "حجوزاتي", icon: "🔖" },
+    { href: "/dashboard/reservations", label: "حجوزاتي", icon: "bookmark" },
   ];
   if (isStaff || isAdmin) {
-    dealsLinks.push({ href: "/dashboard/deals", label: "المعاملات", icon: "💼" });
+    dealsLinks.push({ href: "/dashboard/deals", label: "المعاملات", icon: "briefcase" });
   }
 
   const sections: NavSection[] = [
     {
       title: null,
-      links: [{ href: "/dashboard", label: "نظرة عامة", icon: "🏠", exact: true }],
+      links: [{ href: "/dashboard", label: "نظرة عامة", icon: "home", exact: true }],
     },
     {
       title: "المخزون",
       links: [
-        { href: "/dashboard/inventory", label: "التغطية", icon: "🗺️" },
-        { href: "/dashboard/search", label: "بحث", icon: "🔎" },
-        { href: "/dashboard/map", label: "الخريطة", icon: "📍" },
-        { href: "/dashboard/projects", label: "المشاريع", icon: "🏢" },
-        { href: "/dashboard/developers", label: "المطوّرون", icon: "🏗️" },
+        { href: "/dashboard/inventory", label: "التغطية", icon: "grid" },
+        { href: "/dashboard/search", label: "بحث", icon: "search" },
+        { href: "/dashboard/map", label: "الخريطة", icon: "pin" },
+        { href: "/dashboard/projects", label: "المشاريع", icon: "building" },
+        { href: "/dashboard/developers", label: "المطوّرون", icon: "building2" },
       ],
     },
     { title: "الصفقات", links: dealsLinks },
     {
       title: "العملاء",
       links: [
-        { href: "/dashboard/clients", label: "عملائي", icon: "👥" },
-        { href: "/dashboard/leads", label: "طلبات العملاء", icon: "📥" },
-        { href: "/dashboard/listings", label: "عروضي", icon: "🏷️" },
-        { href: "/dashboard/matching", label: "المطابقة", icon: "🎯" },
+        { href: "/dashboard/clients", label: "عملائي", icon: "users" },
+        { href: "/dashboard/leads", label: "طلبات العملاء", icon: "inbox" },
+        { href: "/dashboard/listings", label: "عروضي", icon: "tag" },
+        { href: "/dashboard/matching", label: "المطابقة", icon: "target" },
       ],
     },
     {
       title: "أخرى",
       links: [
-        { href: "/dashboard/reports", label: "التقارير", icon: "📊" },
-        { href: "/dashboard/referrals", label: "الدعوات", icon: "🎁" },
-        { href: "/dashboard/settings", label: "الإعدادات", icon: "⚙️" },
+        { href: "/dashboard/reports", label: "التقارير", icon: "chart" },
+        { href: "/dashboard/referrals", label: "الدعوات", icon: "gift" },
+        { href: "/dashboard/settings", label: "الإعدادات", icon: "settings" },
       ],
     },
   ];
@@ -105,7 +106,9 @@ export function DashboardNav({
                     color: active ? "var(--brand-dark)" : "var(--muted)",
                   }}
                 >
-                  <span className="text-lg w-6 text-center">{l.icon}</span>
+                  <span className="w-6 flex items-center justify-center">
+                    <Icon name={l.icon} size={19} />
+                  </span>
                   <span>{l.label}</span>
                 </Link>
               );

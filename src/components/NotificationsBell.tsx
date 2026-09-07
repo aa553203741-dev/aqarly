@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
+import { Icon } from "@/components/Icon";
 
 export function NotificationsBell() {
   const [count, setCount] = useState(0);
@@ -34,9 +35,9 @@ export function NotificationsBell() {
       href="/dashboard/notifications"
       className="relative inline-flex items-center justify-center"
       aria-label="الإشعارات"
-      style={{ width: 34, height: 34 }}
+      style={{ width: 34, height: 34, color: "var(--muted)" }}
     >
-      <span className="text-xl">🔔</span>
+      <Icon name="bell" size={20} />
       {count > 0 && (
         <span
           className="absolute -top-0.5 -left-0.5 rounded-full text-[10px] font-bold flex items-center justify-center"

@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { getMe } from "@/lib/me";
 import { SettingsForm } from "@/components/SettingsForm";
+import { ThemeControls } from "@/components/ThemeControls";
 import type { Profile } from "@/lib/types";
 
 export default async function SettingsPage() {
@@ -30,6 +31,10 @@ export default async function SettingsPage() {
       <h1 className="text-2xl font-extrabold mt-0 mb-5">الإعدادات</h1>
 
       <SettingsForm profile={data as Profile} />
+
+      <div className="mt-4">
+        <ThemeControls />
+      </div>
 
       <h2 className="text-base font-bold mt-7 mb-3">إدارة الحساب</h2>
       <div className="flex flex-col gap-2">

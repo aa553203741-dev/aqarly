@@ -26,6 +26,13 @@ export const viewport: Viewport = {
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html lang="ar" dir="rtl" className={`${tajawal.variable} h-full`}>
+      <head>
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `(function(){try{var d=document.documentElement;var t=localStorage.getItem('aqarly-theme')||'system';var a=localStorage.getItem('aqarly-accent');var dark=t==='dark'||(t==='system'&&matchMedia('(prefers-color-scheme:dark)').matches);if(dark)d.setAttribute('data-theme','dark');else d.removeAttribute('data-theme');if(a)d.setAttribute('data-accent',a);}catch(e){}})();`,
+          }}
+        />
+      </head>
       <body className="min-h-full flex flex-col">
         {children}
         <PwaRegister />

@@ -14,6 +14,51 @@
   --radius: 14px;
 }
 
+/* ===== ألوان الثيم (accent) ===== */
+:root[data-accent="blue"] {
+  --brand: #2563eb;
+  --brand-dark: #1d4ed8;
+  --brand-soft: #dbeafe;
+}
+:root[data-accent="violet"] {
+  --brand: #7c3aed;
+  --brand-dark: #6d28d9;
+  --brand-soft: #ede9fe;
+}
+:root[data-accent="amber"] {
+  --brand: #d97706;
+  --brand-dark: #b45309;
+  --brand-soft: #fef3c7;
+}
+:root[data-accent="rose"] {
+  --brand: #e11d48;
+  --brand-dark: #be123c;
+  --brand-soft: #ffe4e6;
+}
+
+/* ===== الوضع الداكن (يأتي أخيرًا ليتفوّق على accent للخلفيات) ===== */
+:root[data-theme="dark"] {
+  --bg: #0e1513;
+  --surface: #161e1c;
+  --border: #29332f;
+  --text: #eef2f0;
+  --muted: #93a29d;
+  --brand-soft: color-mix(in srgb, var(--brand) 22%, #10201c);
+}
+
+/* انتقال سلس عند تبديل الثيم */
+body,
+.card,
+.field,
+.btn,
+aside,
+header {
+  transition:
+    background-color 0.2s ease,
+    border-color 0.2s ease,
+    color 0.2s ease;
+}
+
 @theme inline {
   --color-bg: var(--bg);
   --color-surface: var(--surface);
