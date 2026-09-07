@@ -53,6 +53,9 @@ export default async function AdminPage() {
           <Link href="/admin/analytics" className="btn btn-primary text-sm">
             📈 التحليلات
           </Link>
+          <Link href="/admin/reports" className="btn btn-primary text-sm">
+            📄 التقارير
+          </Link>
           <Link href="/admin/team" className="btn btn-primary text-sm">
             👥 الفريق
           </Link>

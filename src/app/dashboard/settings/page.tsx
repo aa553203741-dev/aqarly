@@ -20,6 +20,7 @@ export default async function SettingsPage() {
     links.push(
       { href: "/admin", icon: "🛠", label: "لوحة الأدمن", desc: "إدارة المستخدمين والإعدادات" },
       { href: "/admin/analytics", icon: "📈", label: "التحليلات", desc: "المخزون والمبيعات والعمولات" },
+      { href: "/admin/reports", icon: "📄", label: "تقارير المخزون", desc: "تصدير Excel وطباعة PDF" },
       { href: "/admin/revenue", icon: "📊", label: "الإيرادات", desc: "المدفوعات والاشتراكات" },
     );
   }
