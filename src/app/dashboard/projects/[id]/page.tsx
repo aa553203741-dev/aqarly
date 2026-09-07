@@ -4,6 +4,7 @@ import { createClient } from "@/lib/supabase/server";
 import { getMe } from "@/lib/me";
 import { PROJECT_STATUS } from "@/lib/inventory-constants";
 import { ProjectInventory } from "@/components/ProjectInventory";
+import { ProjectGallery } from "@/components/ProjectGallery";
 import type { Project, UnitModel, Unit } from "@/lib/inventory-types";
 
 export default async function ProjectDetailPage({
@@ -67,6 +68,12 @@ export default async function ProjectDetailPage({
           )}
         </div>
       </div>
+
+      <ProjectGallery
+        projectId={p.id}
+        initial={p.images ?? []}
+        canManage={me?.canManageInventory ?? false}
+      />
 
       <ProjectInventory
         projectId={p.id}

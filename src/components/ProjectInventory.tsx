@@ -3,6 +3,7 @@
 import { useMemo, useState } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { UNIT_STATUS } from "@/lib/inventory-constants";
+import { ImageUploader } from "@/components/ImageUploader";
 import type { Unit, UnitModel, UnitStatus } from "@/lib/inventory-types";
 
 function statusMeta(v: string) {
@@ -210,15 +211,11 @@ function ModelsSection({
               </label>
             ))}
           </div>
-          <div>
-            <label className="label">رابط مخطط الشقة</label>
-            <input
-              className="field"
-              style={{ direction: "ltr", textAlign: "right" }}
-              value={form.floor_plan_url}
-              onChange={(e) => setForm({ ...form, floor_plan_url: e.target.value })}
-            />
-          </div>
+          <ImageUploader
+            label="مخطط الشقة (صورة)"
+            value={form.floor_plan_url || null}
+            onUploaded={(url) => setForm({ ...form, floor_plan_url: url })}
+          />
           <button className="btn btn-primary" disabled={saving}>
             {saving ? "..." : "حفظ النموذج"}
           </button>
