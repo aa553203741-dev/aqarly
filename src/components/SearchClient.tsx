@@ -5,6 +5,7 @@ import { createClient } from "@/lib/supabase/client";
 import { PROJECT_STATUS, UNIT_STATUS } from "@/lib/inventory-constants";
 import { ReserveModal, type ReserveTarget } from "@/components/ReserveModal";
 import { ShareButton } from "@/components/ShareButton";
+import { AddToClientButton } from "@/components/AddToClientButton";
 import type {
   Developer,
   District,
@@ -262,6 +263,7 @@ export function SearchClient({
                       r.area ? ` · ${r.area} م²` : ""
                     }${r.price != null ? ` · ${Number(r.price).toLocaleString("en-US")} ر.س` : ""}`}
                   />
+                  {canReserve && <AddToClientButton unitId={r.id} />}
                   {canReserve && r.status === "available" && (
                     <button
                       onClick={() =>

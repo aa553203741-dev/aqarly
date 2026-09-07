@@ -167,6 +167,24 @@ export interface Reservation {
   marketer?: { full_name: string | null; email: string | null } | null;
 }
 
+export interface Client {
+  id: string;
+  org_id: string;
+  marketer_id: string;
+  name: string;
+  phone: string | null;
+  budget: number | null;
+  notes: string;
+  created_at: string;
+}
+
+export type InterestStatus =
+  | "shown"
+  | "interested"
+  | "visited"
+  | "negotiating"
+  | "rejected";
+
 export interface UserPermissions {
   user_id: string;
   can_reserve: boolean;

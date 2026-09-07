@@ -13,6 +13,14 @@ export const UNIT_STATUS = [
   { value: "unavailable", label: "غير متاحة", color: "#6b7280" },
 ] as const;
 
+export const INTEREST_STATUS = [
+  { value: "shown", label: "عُرضت", color: "#6b7280" },
+  { value: "interested", label: "مهتم", color: "#2563eb" },
+  { value: "visited", label: "زار", color: "#d97706" },
+  { value: "negotiating", label: "تفاوض", color: "#0d7a6e" },
+  { value: "rejected", label: "غير مناسب", color: "#dc2626" },
+] as const;
+
 export const RESERVATION_STAGE = [
   { value: "reserved", label: "محجوزة" },
   { value: "documents", label: "مستندات" },
