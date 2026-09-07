@@ -6,6 +6,7 @@ import { usePathname, useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 import { Logo } from "@/components/Logo";
 import { InstallButton } from "@/components/InstallButton";
+import { NotificationsBell } from "@/components/NotificationsBell";
 import type { Plan } from "@/lib/types";
 
 type NavLink = { href: string; label: string; icon: string; exact?: boolean };
@@ -145,10 +146,14 @@ export function DashboardNav({
         className="no-print hidden sm:flex flex-col fixed top-0 right-0 h-full w-56 border-l z-20"
         style={{ background: "var(--surface)", borderColor: "var(--border)" }}
       >
-        <div className="p-4 border-b" style={{ borderColor: "var(--border)" }}>
+        <div
+          className="p-4 border-b flex items-center justify-between"
+          style={{ borderColor: "var(--border)" }}
+        >
           <Link href="/dashboard" className="no-underline">
             <Logo size={30} />
           </Link>
+          <NotificationsBell />
         </div>
         <div className="flex-1 overflow-y-auto">
           <NavItems />
@@ -164,14 +169,17 @@ export function DashboardNav({
         <Link href="/dashboard" className="no-underline">
           <Logo size={28} />
         </Link>
-        <button
-          onClick={() => setOpen(true)}
-          aria-label="القائمة"
-          className="text-2xl leading-none"
-          style={{ color: "var(--text)" }}
-        >
-          ☰
-        </button>
+        <div className="flex items-center gap-3">
+          <NotificationsBell />
+          <button
+            onClick={() => setOpen(true)}
+            aria-label="القائمة"
+            className="text-2xl leading-none"
+            style={{ color: "var(--text)" }}
+          >
+            ☰
+          </button>
+        </div>
       </header>
 
       {/* ===== درج الجوال المنزلق ===== */}
