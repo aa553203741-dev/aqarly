@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
@@ -11,6 +11,17 @@ export default function SignupPage() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [needConfirm, setNeedConfirm] = useState(false);
+  const [invite, setInvite] = useState("");
+
+  // تعبئة كود الدعوة تلقائيًا من الرابط ?invite=
+  useEffect(() => {
+    try {
+      const q = new URLSearchParams(window.location.search).get("invite");
+      if (q) setInvite(q);
+    } catch {
+      /* تجاهل */
+    }
+  }, []);
 
   async function submit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -55,6 +66,16 @@ export default function SignupPage() {
     if (!data.session) {
       setNeedConfirm(true);
       return;
+    }
+    // استخدام كود الدعوة (يضبط الدور والمنشأة)
+    const inv = invite.trim();
+    if (inv) {
+      try {
+        const sb = createClient();
+        await sb.rpc("redeem_invite", { p_code: inv });
+      } catch {
+        /* غير حرِج — يبقى بالدور الافتراضي */
+      }
     }
     router.push("/dashboard");
     router.refresh();
@@ -120,6 +141,16 @@ export default function SignupPage() {
                 className="field"
                 required
                 minLength={6}
+                style={{ direction: "ltr", textAlign: "right" }}
+              />
+            </div>
+            <div>
+              <label className="label">كود الدعوة (اختياري)</label>
+              <input
+                className="field"
+                value={invite}
+                onChange={(e) => setInvite(e.target.value)}
+                placeholder="إن أرسله لك المشرف"
                 style={{ direction: "ltr", textAlign: "right" }}
               />
             </div>

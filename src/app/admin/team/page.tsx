@@ -4,6 +4,7 @@ import { createClient } from "@/lib/supabase/server";
 import { getMe } from "@/lib/me";
 import { Logo } from "@/components/Logo";
 import { TeamManager, type TeamMember } from "@/components/TeamManager";
+import { InviteCodes, type Invite } from "@/components/InviteCodes";
 
 export default async function TeamPage() {
   const me = await getMe();
@@ -11,12 +12,13 @@ export default async function TeamPage() {
   if (!me.isAdmin) redirect("/dashboard");
 
   const supabase = await createClient();
-  const [{ data: profiles }, { data: perms }] = await Promise.all([
+  const [{ data: profiles }, { data: perms }, { data: invites }] = await Promise.all([
     supabase
       .from("profiles")
       .select("id, email, full_name, role")
       .order("created_at", { ascending: false }),
     supabase.from("user_permissions").select("*"),
+    supabase.from("invite_codes").select("*").order("created_at", { ascending: false }),
   ]);
 
   const permMap = new Map(
@@ -50,7 +52,15 @@ export default async function TeamPage() {
         </Link>
       </div>
       <h1 className="text-2xl font-extrabold mt-0 mb-1">الفريق والصلاحيات</h1>
-      <p className="text-sm mb-5" style={{ color: "var(--muted)" }}>
+
+      <h2 className="text-base font-bold mt-4 mb-3">أكواد الدعوة</h2>
+      <p className="text-sm mb-3" style={{ color: "var(--muted)" }}>
+        ولّد كودًا وأرسله للمسوّق ليسجّل به فينضم بالدور الصحيح تلقائيًا.
+      </p>
+      <InviteCodes initial={(invites as Invite[]) ?? []} />
+
+      <h2 className="text-base font-bold mt-7 mb-3">الأعضاء والصلاحيات</h2>
+      <p className="text-sm mb-4" style={{ color: "var(--muted)" }}>
         عيّن دور كل مستخدم وصلاحياته الدقيقة. الأدمن يملك كل الصلاحيات تلقائيًا.
       </p>
       <TeamManager initial={members} meId={me.userId} />
