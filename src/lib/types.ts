@@ -50,6 +50,19 @@ export interface Listing {
   created_at: string;
 }
 
+export interface LeadSuggestion {
+  id: string;
+  lead_id: string;
+  kind: "unit" | "listing";
+  ref_id: string;
+  title: string;
+  subtitle: string;
+  price: number | null;
+  note: string;
+  created_by: string;
+  created_at: string;
+}
+
 export interface Referral {
   id: string;
   referrer_user_id: string;
