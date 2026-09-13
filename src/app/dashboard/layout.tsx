@@ -7,6 +7,7 @@ export default async function DashboardLayout({
 }: LayoutProps<"/dashboard">) {
   const me = await getMe();
   if (!me) redirect("/login");
+  if (!me.isActive) redirect("/pending");
   const p = me.profile;
 
   return (

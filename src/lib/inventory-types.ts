@@ -68,7 +68,9 @@ export interface UnitModel {
   kitchen: boolean;
   maid_room: boolean;
   balcony: boolean;
-  floor_plan_url: string | null;
+  floor_plan_url: string | null;   // مخطط الشقة — صورة أو PDF
+  images: string[];                // معرض صور النموذج
+  video_url: string | null;        // جولة فيديو
   extra_features: Record<string, unknown>;
   notes: string;
   created_at: string;

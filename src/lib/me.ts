@@ -23,17 +23,25 @@ export const getMe = cache(async function getMe() {
 
   const p = profile as Profile | null;
   const pr = perms as UserPermissions | null;
-  const isAdmin = p?.role === "admin";
+
+  // حساب لم يعتمده الأدمن بعد = بلا دور وبلا صلاحيات.
+  // قاعدة البيانات تفرض هذا أيضًا (current_org/has_perm في 20_account_approval.sql)؛
+  // ما هنا لإخفاء الواجهة فقط — الحدّ الأمني هناك لا هنا.
+  const status = p?.status ?? "pending";
+  const isActive = status === "active";
+  const isAdmin = isActive && p?.role === "admin";
 
   return {
     userId: user.id,
     profile: p,
     perms: pr,
+    status,
+    isActive,
     isAdmin,
-    canManageInventory: isAdmin || pr?.can_manage_inventory === true,
-    canReserve: isAdmin || pr?.can_reserve !== false,
-    canProcessPayments: isAdmin || pr?.can_process_payments === true,
-    canCloseDeals: isAdmin || pr?.can_close_deals === true,
+    canManageInventory: isActive && (isAdmin || pr?.can_manage_inventory === true),
+    canReserve: isActive && (isAdmin || pr?.can_reserve !== false),
+    canProcessPayments: isActive && (isAdmin || pr?.can_process_payments === true),
+    canCloseDeals: isActive && (isAdmin || pr?.can_close_deals === true),
   };
 });
 

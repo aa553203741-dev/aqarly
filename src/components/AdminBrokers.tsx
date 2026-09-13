@@ -8,10 +8,23 @@ export function AdminBrokers({ initial }: { initial: Profile[] }) {
   const [brokers, setBrokers] = useState(initial);
   const [q, setQ] = useState("");
 
+  const [error, setError] = useState("");
+
   async function setPlan(id: string, plan: Plan) {
+    const before = brokers;
     setBrokers((bs) => bs.map((b) => (b.id === id ? { ...b, plan } : b)));
+    setError("");
     const supabase = createClient();
-    await supabase.from("profiles").update({ plan }).eq("id", id);
+    // الكتابة المباشرة على profiles.plan مسحوبة من دور authenticated
+    const { data, error: rpcError } = await supabase.rpc("set_user_plan", {
+      p_user: id,
+      p_plan: plan,
+      p_days: 0,
+    });
+    if (rpcError || (data && data !== "ok")) {
+      setBrokers(before);
+      setError("تعذّر تغيير الخطة. تأكد أن حسابك أدمن معتمد.");
+    }
   }
 
   const shown = brokers.filter(
@@ -29,6 +42,12 @@ export function AdminBrokers({ initial }: { initial: Profile[] }) {
         value={q}
         onChange={(e) => setQ(e.target.value)}
       />
+
+      {error && (
+        <p className="text-sm mb-3" style={{ color: "var(--danger)" }}>
+          {error}
+        </p>
+      )}
       <div className="flex flex-col gap-2">
         {shown.map((b) => (
           <div

@@ -77,7 +77,8 @@ export default function SignupPage() {
         /* غير حرِج — يبقى بالدور الافتراضي */
       }
     }
-    router.push("/dashboard");
+    // بلا كود دعوة يبقى الحساب قيد مراجعة الأدمن
+    router.push(inv ? "/dashboard" : "/pending");
     router.refresh();
   }
 
@@ -108,6 +109,13 @@ export default function SignupPage() {
           <h1 className="text-xl font-bold mt-0 mb-5 text-center">
             حساب وسيط جديد
           </h1>
+          <p
+            className="text-sm text-center -mt-3 mb-5"
+            style={{ color: "var(--muted)" }}
+          >
+            الحسابات الجديدة تُراجَع قبل تفعيلها. إن كان لديك كود دعوة من
+            المشرف، أدخله أدناه ليُفعَّل حسابك فورًا.
+          </p>
           <form onSubmit={submit} className="flex flex-col gap-4">
             <div>
               <label className="label">الاسم الكامل</label>

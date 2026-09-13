@@ -5,6 +5,10 @@ import { getMe } from "@/lib/me";
 import { Logo } from "@/components/Logo";
 import { TeamManager, type TeamMember } from "@/components/TeamManager";
 import { InviteCodes, type Invite } from "@/components/InviteCodes";
+import {
+  PendingAccounts,
+  type PendingAccount,
+} from "@/components/PendingAccounts";
 
 export default async function TeamPage() {
   const me = await getMe();
@@ -15,7 +19,7 @@ export default async function TeamPage() {
   const [{ data: profiles }, { data: perms }, { data: invites }] = await Promise.all([
     supabase
       .from("profiles")
-      .select("id, email, full_name, role")
+      .select("id, email, full_name, phone, role, status, created_at")
       .order("created_at", { ascending: false }),
     supabase.from("user_permissions").select("*"),
     supabase.from("invite_codes").select("*").order("created_at", { ascending: false }),
@@ -25,10 +29,32 @@ export default async function TeamPage() {
     ((perms as Record<string, unknown>[]) ?? []).map((p) => [p.user_id as string, p]),
   );
 
-  const members: TeamMember[] = (
-    (profiles as { id: string; email: string | null; full_name: string | null; role: string }[]) ??
-    []
-  ).map((p) => {
+  type ProfileRow = {
+    id: string;
+    email: string | null;
+    full_name: string | null;
+    phone: string | null;
+    role: string;
+    status: string;
+    created_at: string;
+  };
+  const rows = (profiles as ProfileRow[]) ?? [];
+
+  // الحسابات المسجّلة ذاتيًا تنتظر قرار الأدمن قبل أن ترى أي شيء
+  const pending: PendingAccount[] = rows
+    .filter((p) => p.status === "pending")
+    .map((p) => ({
+      id: p.id,
+      email: p.email,
+      full_name: p.full_name,
+      phone: p.phone,
+      status: p.status,
+      created_at: p.created_at,
+    }));
+
+  const members: TeamMember[] = rows
+    .filter((p) => p.status === "active")
+    .map((p) => {
     const pm = (permMap.get(p.id) ?? {}) as Record<string, boolean>;
     return {
       id: p.id,
@@ -53,7 +79,16 @@ export default async function TeamPage() {
       </div>
       <h1 className="text-2xl font-extrabold mt-0 mb-1">الفريق والصلاحيات</h1>
 
-      <h2 className="text-base font-bold mt-4 mb-3">أكواد الدعوة</h2>
+      <h2 className="text-base font-bold mt-4 mb-3">
+        طلبات الانضمام
+        {pending.length > 0 ? " (" + pending.length + ")" : ""}
+      </h2>
+      <p className="text-sm mb-3" style={{ color: "var(--muted)" }}>
+        كل من يسجّل عبر الرابط العام يصل هنا أولًا. لا يُفعَّل حساب إلا باعتمادك.
+      </p>
+      <PendingAccounts initial={pending} />
+
+      <h2 className="text-base font-bold mt-7 mb-3">أكواد الدعوة</h2>
       <p className="text-sm mb-3" style={{ color: "var(--muted)" }}>
         ولّد كودًا وأرسله للمسوّق ليسجّل به فينضم بالدور الصحيح تلقائيًا.
       </p>
@@ -61,7 +96,8 @@ export default async function TeamPage() {
 
       <h2 className="text-base font-bold mt-7 mb-3">الأعضاء والصلاحيات</h2>
       <p className="text-sm mb-4" style={{ color: "var(--muted)" }}>
-        عيّن دور كل مستخدم وصلاحياته الدقيقة. الأدمن يملك كل الصلاحيات تلقائيًا.
+        الأعضاء المعتمدون فقط. عيّن دور كل مستخدم وصلاحياته الدقيقة؛ الأدمن يملك
+        كل الصلاحيات تلقائيًا.
       </p>
       <TeamManager initial={members} meId={me.userId} />
     </div>

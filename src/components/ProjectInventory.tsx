@@ -3,7 +3,7 @@
 import { useMemo, useState } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { UNIT_STATUS } from "@/lib/inventory-constants";
-import { ImageUploader } from "@/components/ImageUploader";
+import { GalleryUploader, FileUploader } from "@/components/MediaUploader";
 import type { Unit, UnitModel, UnitStatus } from "@/lib/inventory-types";
 
 function statusMeta(v: string) {
@@ -90,6 +90,8 @@ function ModelsSection({
     maid_room: false,
     balcony: false,
     floor_plan_url: "",
+    images: [] as string[],
+    video_url: "",
     notes: "",
   };
   const [open, setOpen] = useState(false);
@@ -114,6 +116,8 @@ function ModelsSection({
         maid_room: form.maid_room,
         balcony: form.balcony,
         floor_plan_url: form.floor_plan_url.trim() || null,
+        images: form.images,
+        video_url: form.video_url.trim() || null,
         notes: form.notes.trim(),
       })
       .select()
@@ -211,10 +215,28 @@ function ModelsSection({
               </label>
             ))}
           </div>
-          <ImageUploader
-            label="مخطط الشقة (صورة)"
+          <FileUploader
+            label="مخطط الشقة"
+            accept="image/*,application/pdf"
+            folder="plans"
+            maxMB={10}
+            hint="صورة أو ملف PDF — حتى ١٠ ميجابايت"
             value={form.floor_plan_url || null}
-            onUploaded={(url) => setForm({ ...form, floor_plan_url: url })}
+            onChange={(url) => setForm({ ...form, floor_plan_url: url ?? "" })}
+          />
+          <GalleryUploader
+            label="صور النموذج"
+            value={form.images}
+            onChange={(images) => setForm({ ...form, images })}
+          />
+          <FileUploader
+            label="جولة فيديو"
+            accept="video/mp4,video/webm,video/quicktime"
+            folder="videos"
+            maxMB={50}
+            hint="MP4 أو WebM — حتى ٥٠ ميجابايت"
+            value={form.video_url || null}
+            onChange={(url) => setForm({ ...form, video_url: url ?? "" })}
           />
           <button className="btn btn-primary" disabled={saving}>
             {saving ? "..." : "حفظ النموذج"}
@@ -252,17 +274,56 @@ function ModelsSection({
                   {chips(m).join(" · ")}
                 </div>
               )}
-              {m.floor_plan_url && (
-                <a
-                  href={m.floor_plan_url}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-sm mt-2 inline-block"
-                  style={{ color: "var(--brand)" }}
-                >
-                  📐 المخطط
-                </a>
+              {m.images?.length > 0 && (
+                <div className="flex gap-1.5 flex-wrap mt-3">
+                  {m.images.slice(0, 4).map((url, i) => (
+                    // eslint-disable-next-line @next/next/no-img-element
+                    <img
+                      key={url}
+                      src={url}
+                      alt={`صورة ${i + 1} لنموذج ${m.name}`}
+                      className="w-14 h-14 object-cover rounded-md"
+                      style={{ border: "1px solid var(--border)" }}
+                    />
+                  ))}
+                  {m.images.length > 4 && (
+                    <div
+                      className="w-14 h-14 rounded-md flex items-center justify-center text-xs"
+                      style={{
+                        background: "var(--brand-soft)",
+                        color: "var(--brand)",
+                        fontWeight: 700,
+                      }}
+                    >
+                      +{m.images.length - 4}
+                    </div>
+                  )}
+                </div>
               )}
+              <div className="flex gap-3 flex-wrap mt-2">
+                {m.floor_plan_url && (
+                  <a
+                    href={m.floor_plan_url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-sm inline-block"
+                    style={{ color: "var(--brand)" }}
+                  >
+                    📐 المخطط
+                  </a>
+                )}
+                {m.video_url && (
+                  <a
+                    href={m.video_url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-sm inline-block"
+                    style={{ color: "var(--brand)" }}
+                  >
+                    ▶️ جولة فيديو
+                  </a>
+                )}
+              </div>
             </div>
           ))}
         </div>

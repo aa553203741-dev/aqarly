@@ -1,6 +1,8 @@
 // أنواع البيانات — تعكس مخطّط قاعدة البيانات
 
 export type Role = "broker" | "admin";
+// حالة اعتماد الحساب — الحسابات الجديدة تبدأ pending حتى يعتمدها الأدمن
+export type AccountStatus = "pending" | "active" | "rejected";
 export type Plan = "free" | "premium";
 export type DealType = "buy" | "rent";
 export type LeadStatus = "new" | "in_progress" | "done" | "rejected";
@@ -12,6 +14,10 @@ export interface Profile {
   full_name: string | null;
   phone: string | null;
   role: Role;
+  status: AccountStatus;
+  approved_by: string | null;
+  approved_at: string | null;
+  rejected_reason: string | null;
   plan: Plan;
   plan_expires_at: string | null;
   created_at: string;

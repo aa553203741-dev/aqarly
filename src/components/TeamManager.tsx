@@ -40,10 +40,26 @@ export function TeamManager({
   const [members, setMembers] = useState(initial);
   const [q, setQ] = useState("");
 
+  const [error, setError] = useState("");
+
   async function setRole(id: string, role: string) {
+    const before = members;
     setMembers((m) => m.map((x) => (x.id === id ? { ...x, role } : x)));
+    setError("");
     const supabase = createClient();
-    await supabase.from("profiles").update({ role }).eq("id", id);
+    // الكتابة المباشرة على profiles.role مسحوبة من دور authenticated
+    const { data, error: rpcError } = await supabase.rpc("set_user_role", {
+      p_user: id,
+      p_role: role,
+    });
+    if (rpcError || (data && data !== "ok")) {
+      setMembers(before);
+      setError(
+        data === "self"
+          ? "لا يمكنك تغيير دورك بنفسك — اطلب ذلك من أدمن آخر"
+          : "تعذّر تغيير الدور. تأكد أن حسابك أدمن معتمد.",
+      );
+    }
   }
 
   async function togglePerm(
@@ -73,6 +89,12 @@ export function TeamManager({
         value={q}
         onChange={(e) => setQ(e.target.value)}
       />
+
+      {error && (
+        <p className="text-sm mb-3" style={{ color: "var(--danger)" }}>
+          {error}
+        </p>
+      )}
 
       <div className="flex flex-col gap-3">
         {shown.map((m) => {
