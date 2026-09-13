@@ -1,6 +1,8 @@
 import Link from "next/link";
 import { getMe } from "@/lib/me";
+import { getPublicSettings } from "@/lib/settings";
 import { SettingsForm } from "@/components/SettingsForm";
+import { SystemSettingsForm } from "@/components/SystemSettingsForm";
 import { ThemeControls } from "@/components/ThemeControls";
 import type { Profile } from "@/lib/types";
 
@@ -8,6 +10,7 @@ export default async function SettingsPage() {
   const me = await getMe();
   const data = me?.profile ?? null;
   const isAdmin = me?.isAdmin ?? false;
+  const sys = isAdmin ? await getPublicSettings() : null;
 
   const links: { href: string; icon: string; label: string; desc: string }[] = [
     {
@@ -35,6 +38,16 @@ export default async function SettingsPage() {
       <div className="mt-4">
         <ThemeControls />
       </div>
+
+      {isAdmin && sys && (
+        <>
+          <h2 className="text-base font-bold mt-7 mb-3">إعدادات النظام</h2>
+          <SystemSettingsForm
+            sessionMinutes={sys.sessionMinutes}
+            mediaLinkMinutes={Math.round(sys.mediaLinkSeconds / 60)}
+          />
+        </>
+      )}
 
       <h2 className="text-base font-bold mt-7 mb-3">إدارة الحساب</h2>
       <div className="flex flex-col gap-2">

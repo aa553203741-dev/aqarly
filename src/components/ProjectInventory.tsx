@@ -4,6 +4,7 @@ import { useMemo, useState } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { UNIT_STATUS } from "@/lib/inventory-constants";
 import { GalleryUploader, FileUploader } from "@/components/MediaUploader";
+import { mediaSrc } from "@/lib/media-url";
 import type { Unit, UnitModel, UnitStatus } from "@/lib/inventory-types";
 
 function statusMeta(v: string) {
@@ -280,7 +281,7 @@ function ModelsSection({
                     // eslint-disable-next-line @next/next/no-img-element
                     <img
                       key={url}
-                      src={url}
+                      src={mediaSrc(url)}
                       alt={`صورة ${i + 1} لنموذج ${m.name}`}
                       className="w-14 h-14 object-cover rounded-md"
                       style={{ border: "1px solid var(--border)" }}
@@ -303,7 +304,7 @@ function ModelsSection({
               <div className="flex gap-3 flex-wrap mt-2">
                 {m.floor_plan_url && (
                   <a
-                    href={m.floor_plan_url}
+                    href={mediaSrc(m.floor_plan_url)}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="text-sm inline-block"
@@ -314,7 +315,7 @@ function ModelsSection({
                 )}
                 {m.video_url && (
                   <a
-                    href={m.video_url}
+                    href={mediaSrc(m.video_url)}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="text-sm inline-block"

@@ -6,6 +6,7 @@ import { createClient } from "@/lib/supabase/client";
 import { CITIES } from "@/lib/constants";
 import { PROJECT_STATUS } from "@/lib/inventory-constants";
 import { ImageUploader } from "@/components/ImageUploader";
+import { mediaSrc } from "@/lib/media-url";
 import type { Developer, District, Project } from "@/lib/inventory-types";
 
 function statusMeta(v: string) {
@@ -293,7 +294,7 @@ export function ProjectsManager({
                 {p.cover_image && (
                   // eslint-disable-next-line @next/next/no-img-element
                   <img
-                    src={p.cover_image}
+                    src={mediaSrc(p.cover_image)}
                     alt=""
                     className="w-full h-36 object-cover"
                   />

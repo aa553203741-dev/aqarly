@@ -5,6 +5,7 @@ import { getMe } from "@/lib/me";
 import { PROJECT_STATUS } from "@/lib/inventory-constants";
 import { ProjectInventory } from "@/components/ProjectInventory";
 import { ProjectGallery } from "@/components/ProjectGallery";
+import { mediaSrc } from "@/lib/media-url";
 import type { Project, UnitModel, Unit } from "@/lib/inventory-types";
 
 export default async function ProjectDetailPage({
@@ -41,7 +42,7 @@ export default async function ProjectDetailPage({
       <div className="card overflow-hidden mt-3 mb-5">
         {p.cover_image && (
           // eslint-disable-next-line @next/next/no-img-element
-          <img src={p.cover_image} alt="" className="w-full h-44 object-cover" />
+          <img src={mediaSrc(p.cover_image)} alt="" className="w-full h-44 object-cover" />
         )}
         <div className="p-5">
           <div className="flex items-start justify-between gap-3 flex-wrap">

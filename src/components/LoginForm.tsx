@@ -9,6 +9,7 @@ export function LoginForm() {
   const search = useSearchParams();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const expired = search.get("expired") === "1";
 
   async function submit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -31,6 +32,17 @@ export function LoginForm() {
 
   return (
     <form onSubmit={submit} className="flex flex-col gap-4">
+      {expired && !error && (
+        <p
+          className="text-sm text-center rounded-lg p-2 mb-1"
+          style={{
+            color: "var(--warn, #d97706)",
+            background: "color-mix(in srgb, var(--warn, #d97706) 10%, transparent)",
+          }}
+        >
+          انتهت مدة الجلسة. سجّل الدخول من جديد للمتابعة.
+        </p>
+      )}
       <div>
         <label className="label">البريد الإلكتروني</label>
         <input

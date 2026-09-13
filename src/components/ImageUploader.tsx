@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { createClient } from "@/lib/supabase/client";
+import { mediaSrc } from "@/lib/media-url";
 
 const BUCKET = "project-media";
 
@@ -33,9 +34,9 @@ export function ImageUploader({
       setError("تعذّر الرفع: " + upErr.message);
       return;
     }
-    const { data } = supabase.storage.from(BUCKET).getPublicUrl(path);
+    // نخزّن المسار؛ العرض يمرّ عبر وسيط يوقّع رابطًا موقّتًا.
     setUploading(false);
-    onUploaded(data.publicUrl);
+    onUploaded(path);
   }
 
   return (
@@ -45,7 +46,7 @@ export function ImageUploader({
         {value ? (
           // eslint-disable-next-line @next/next/no-img-element
           <img
-            src={value}
+            src={mediaSrc(value)}
             alt=""
             className="w-16 h-16 object-cover rounded-lg"
             style={{ border: "1px solid var(--border)" }}

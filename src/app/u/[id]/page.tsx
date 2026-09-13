@@ -1,9 +1,29 @@
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
+import { createAdminClient } from "@/lib/supabase/admin";
+import { getPublicSettings } from "@/lib/settings";
+import { storagePath } from "@/lib/media-url";
 import { Logo } from "@/components/Logo";
 import { PROJECT_STATUS, UNIT_STATUS } from "@/lib/inventory-constants";
 import { APP_NAME } from "@/lib/constants";
+
+// توقيع خادمي لوسائط بطاقة المشاركة (الزائر غير مسجّل، فلا يمرّ بوسيط /api/media).
+async function signPublic(values: (string | null | undefined)[]) {
+  const paths = values.map(storagePath);
+  const wanted = [...new Set(paths.filter((p): p is string => !!p))];
+  if (wanted.length === 0) return new Map<string, string>();
+  const { mediaLinkSeconds } = await getPublicSettings();
+  const admin = createAdminClient();
+  const { data } = await admin.storage
+    .from("project-media")
+    .createSignedUrls(wanted, mediaLinkSeconds);
+  const map = new Map<string, string>();
+  (data ?? []).forEach((r) => {
+    if (r.path && r.signedUrl) map.set(r.path, r.signedUrl);
+  });
+  return map;
+}
 
 export default async function PublicUnitPage({
   params,
@@ -13,6 +33,14 @@ export default async function PublicUnitPage({
   const { data } = await supabase.rpc("public_unit_card", { p_unit_id: id });
   const u = data?.[0];
   if (!u) notFound();
+
+  const signed = await signPublic([u.cover_image, u.floor_plan_url]);
+  const sign = (v: string | null | undefined) => {
+    const p = storagePath(v);
+    return (p && signed.get(p)) || v || undefined;
+  };
+  const coverSrc = sign(u.cover_image);
+  const floorPlanSrc = sign(u.floor_plan_url);
 
   const price = u.discount_price ?? u.price;
   const ps = PROJECT_STATUS.find((s) => s.value === u.project_status);
@@ -28,7 +56,7 @@ export default async function PublicUnitPage({
         <div className="card overflow-hidden">
           {u.cover_image && (
             // eslint-disable-next-line @next/next/no-img-element
-            <img src={u.cover_image} alt="" className="w-full h-52 object-cover" />
+            <img src={coverSrc} alt="" className="w-full h-52 object-cover" />
           )}
           <div className="p-5">
             <div className="flex items-start justify-between gap-2">
@@ -64,9 +92,9 @@ export default async function PublicUnitPage({
             </div>
 
             <div className="flex gap-2 flex-wrap mt-5">
-              {u.floor_plan_url && (
+              {floorPlanSrc && (
                 <a
-                  href={u.floor_plan_url}
+                  href={floorPlanSrc}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="btn btn-ghost text-sm"

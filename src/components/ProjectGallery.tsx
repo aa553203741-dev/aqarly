@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { ImageUploader } from "@/components/ImageUploader";
+import { mediaSrc } from "@/lib/media-url";
 
 export function ProjectGallery({
   projectId,
@@ -50,7 +51,7 @@ export function ProjectGallery({
             <div key={src} className="relative">
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
-                src={src}
+                src={mediaSrc(src)}
                 alt=""
                 className="w-full h-24 object-cover rounded-lg"
                 style={{ border: "1px solid var(--border)" }}

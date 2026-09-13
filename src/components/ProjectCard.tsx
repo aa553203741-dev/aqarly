@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { PROJECT_STATUS } from "@/lib/inventory-constants";
+import { mediaSrc } from "@/lib/media-url";
 import type { Project, ProjectStat } from "@/lib/inventory-types";
 
 export function ProjectCard({
@@ -27,7 +28,7 @@ export function ProjectCard({
     <div className="card overflow-hidden">
       {p.cover_image && (
         // eslint-disable-next-line @next/next/no-img-element
-        <img src={p.cover_image} alt="" className="w-full h-32 object-cover" />
+        <img src={mediaSrc(p.cover_image)} alt="" className="w-full h-32 object-cover" />
       )}
       <div className="p-4">
         <div className="flex items-start justify-between gap-2">

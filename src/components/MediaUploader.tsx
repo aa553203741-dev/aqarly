@@ -2,10 +2,12 @@
 
 import { useState } from "react";
 import { createClient } from "@/lib/supabase/client";
+import { mediaSrc } from "@/lib/media-url";
 
 const BUCKET = "project-media";
 const MB = 1024 * 1024;
 
+// يرفع الملف ويعيد مساره داخل المخزن (لا رابطًا عامًا) — العرض يوقّع لاحقًا.
 async function put(file: File, folder: string) {
   const supabase = createClient();
   const ext = file.name.split(".").pop() || "bin";
@@ -14,10 +16,10 @@ async function put(file: File, folder: string) {
     .from(BUCKET)
     .upload(path, file, { upsert: false, contentType: file.type });
   if (error) throw new Error(error.message);
-  return supabase.storage.from(BUCKET).getPublicUrl(path).data.publicUrl;
+  return path;
 }
 
-const isImage = (url: string) => /\.(jpe?g|png|webp|gif|avif)(\?|$)/i.test(url);
+const isImage = (v: string) => /\.(jpe?g|png|webp|gif|avif)(\?|$)/i.test(v);
 
 /* ── معرض صور: عدة ملفات، مع حذف وإعادة ترتيب بالسحب البسيط ── */
 export function GalleryUploader({
@@ -77,7 +79,7 @@ export function GalleryUploader({
             <div key={url} className="relative">
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
-                src={url}
+                src={mediaSrc(url)}
                 alt={`صورة ${i + 1}`}
                 className="w-20 h-20 object-cover rounded-lg"
                 style={{ border: "1px solid var(--border)" }}
@@ -169,14 +171,14 @@ export function FileUploader({
           {isImage(value) ? (
             // eslint-disable-next-line @next/next/no-img-element
             <img
-              src={value}
+              src={mediaSrc(value)}
               alt=""
               className="w-20 h-20 object-cover rounded-lg"
               style={{ border: "1px solid var(--border)" }}
             />
           ) : (
             <a
-              href={value}
+              href={mediaSrc(value)}
               target="_blank"
               rel="noopener noreferrer"
               className="text-sm"
