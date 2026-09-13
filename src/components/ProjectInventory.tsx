@@ -11,6 +11,69 @@ function statusMeta(v: string) {
   return UNIT_STATUS.find((s) => s.value === v) ?? UNIT_STATUS[0];
 }
 
+// محرّر مكوّنات الشقة — إضافة يدوية حرّة (وسوم).
+function FeaturesEditor({
+  value,
+  onChange,
+}: {
+  value: string[];
+  onChange: (v: string[]) => void;
+}) {
+  const [text, setText] = useState("");
+  function add() {
+    const t = text.trim();
+    if (!t || value.includes(t)) {
+      setText("");
+      return;
+    }
+    onChange([...value, t]);
+    setText("");
+  }
+  return (
+    <div>
+      <label className="label">مكوّنات الشقة (إضافة يدوية)</label>
+      <div className="flex gap-2">
+        <input
+          className="field flex-1"
+          placeholder="مثال: غرفة سائق، مستودع، سطح خاص…"
+          value={text}
+          onChange={(e) => setText(e.target.value)}
+          onKeyDown={(e) => {
+            if (e.key === "Enter") {
+              e.preventDefault();
+              add();
+            }
+          }}
+        />
+        <button type="button" className="btn btn-ghost" onClick={add}>
+          إضافة
+        </button>
+      </div>
+      {value.length > 0 && (
+        <div className="flex gap-2 flex-wrap mt-2">
+          {value.map((f) => (
+            <span
+              key={f}
+              className="badge flex items-center gap-1.5"
+              style={{ background: "var(--brand-soft)", color: "var(--brand-dark)" }}
+            >
+              {f}
+              <button
+                type="button"
+                onClick={() => onChange(value.filter((x) => x !== f))}
+                aria-label={`إزالة ${f}`}
+                style={{ fontWeight: 700 }}
+              >
+                ×
+              </button>
+            </span>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
 type Draft = {
   unit_no: string;
   floor: string;
@@ -93,6 +156,7 @@ function ModelsSection({
     floor_plan_url: "",
     images: [] as string[],
     video_url: "",
+    features: [] as string[],
     notes: "",
   };
   const [open, setOpen] = useState(false);
@@ -119,6 +183,7 @@ function ModelsSection({
         floor_plan_url: form.floor_plan_url.trim() || null,
         images: form.images,
         video_url: form.video_url.trim() || null,
+        features: form.features,
         notes: form.notes.trim(),
       })
       .select()
@@ -145,6 +210,7 @@ function ModelsSection({
       m.kitchen && "مطبخ",
       m.maid_room && "غرفة خادمة",
       m.balcony && "بلكونة",
+      ...(m.features ?? []),
     ].filter(Boolean) as string[];
 
   return (
@@ -238,6 +304,10 @@ function ModelsSection({
             hint="MP4 أو WebM — حتى ٥٠ ميجابايت"
             value={form.video_url || null}
             onChange={(url) => setForm({ ...form, video_url: url ?? "" })}
+          />
+          <FeaturesEditor
+            value={form.features}
+            onChange={(features) => setForm({ ...form, features })}
           />
           <button className="btn btn-primary" disabled={saving}>
             {saving ? "..." : "حفظ النموذج"}

@@ -34,13 +34,22 @@ export default async function PublicUnitPage({
   const u = data?.[0];
   if (!u) notFound();
 
-  const signed = await signPublic([u.cover_image, u.floor_plan_url]);
+  const gallery: string[] = u.images ?? [];
+  const features: string[] = u.features ?? [];
+  const signed = await signPublic([
+    u.cover_image,
+    u.floor_plan_url,
+    u.video_url,
+    ...gallery,
+  ]);
   const sign = (v: string | null | undefined) => {
     const p = storagePath(v);
     return (p && signed.get(p)) || v || undefined;
   };
   const coverSrc = sign(u.cover_image);
   const floorPlanSrc = sign(u.floor_plan_url);
+  const videoSrc = sign(u.video_url);
+  const gallerySrcs = gallery.map(sign).filter(Boolean) as string[];
 
   const price = u.discount_price ?? u.price;
   const ps = PROJECT_STATUS.find((s) => s.value === u.project_status);
@@ -90,6 +99,50 @@ export default async function PublicUnitPage({
               {u.unit_view && <Spec label="الإطلالة" value={u.unit_view} />}
               {us && <Spec label="الحالة" value={us.label} />}
             </div>
+
+            {features.length > 0 && (
+              <div className="mt-4">
+                <div className="text-xs mb-1.5" style={{ color: "var(--muted)" }}>
+                  مكوّنات الشقة
+                </div>
+                <div className="flex gap-2 flex-wrap">
+                  {features.map((f) => (
+                    <span
+                      key={f}
+                      className="badge"
+                      style={{ background: "var(--brand-soft)", color: "var(--brand-dark)" }}
+                    >
+                      {f}
+                    </span>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {gallerySrcs.length > 0 && (
+              <div className="grid grid-cols-3 gap-2 mt-4">
+                {gallerySrcs.map((src, i) => (
+                  // eslint-disable-next-line @next/next/no-img-element
+                  <img
+                    key={i}
+                    src={src}
+                    alt=""
+                    className="w-full h-20 object-cover rounded-lg"
+                    style={{ border: "1px solid var(--border)" }}
+                  />
+                ))}
+              </div>
+            )}
+
+            {videoSrc && (
+              <video
+                controls
+                preload="metadata"
+                src={videoSrc}
+                className="w-full rounded-lg mt-4"
+                style={{ border: "1px solid var(--border)" }}
+              />
+            )}
 
             <div className="flex gap-2 flex-wrap mt-5">
               {floorPlanSrc && (

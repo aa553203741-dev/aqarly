@@ -71,6 +71,7 @@ export interface UnitModel {
   floor_plan_url: string | null;   // مخطط الشقة — صورة أو PDF
   images: string[];                // معرض صور النموذج
   video_url: string | null;        // جولة فيديو
+  features: string[];              // مكوّنات/مزايا مضافة يدويًا
   extra_features: Record<string, unknown>;
   notes: string;
   created_at: string;
