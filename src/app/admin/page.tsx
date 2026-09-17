@@ -62,6 +62,9 @@ export default async function AdminPage() {
           <Link href="/admin/coverage" className="btn btn-primary text-sm">
             🗺️ التغطية
           </Link>
+          <Link href="/admin/leaderboard" className="btn btn-primary text-sm">
+            🏆 الترتيب
+          </Link>
           <Link href="/admin/revenue" className="btn btn-primary text-sm">
             📊 الإيرادات
           </Link>
