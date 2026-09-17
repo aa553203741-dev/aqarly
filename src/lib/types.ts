@@ -20,6 +20,7 @@ export interface Profile {
   rejected_reason: string | null;
   plan: Plan;
   plan_expires_at: string | null;
+  fal_license: string | null;
   created_at: string;
   updated_at: string;
 }

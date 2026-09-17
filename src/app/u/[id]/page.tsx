@@ -1,30 +1,12 @@
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
-import { createAdminClient } from "@/lib/supabase/admin";
-import { getPublicSettings } from "@/lib/settings";
-import { storagePath } from "@/lib/media-url";
+import { signPublicMedia } from "@/lib/media-server";
 import { Logo } from "@/components/Logo";
 import { BookVisit } from "@/components/BookVisit";
+import { FavoriteButton } from "@/components/FavoriteButton";
 import { PROJECT_STATUS, UNIT_STATUS } from "@/lib/inventory-constants";
 import { APP_NAME } from "@/lib/constants";
-
-// توقيع خادمي لوسائط بطاقة المشاركة (الزائر غير مسجّل، فلا يمرّ بوسيط /api/media).
-async function signPublic(values: (string | null | undefined)[]) {
-  const paths = values.map(storagePath);
-  const wanted = [...new Set(paths.filter((p): p is string => !!p))];
-  if (wanted.length === 0) return new Map<string, string>();
-  const { mediaLinkSeconds } = await getPublicSettings();
-  const admin = createAdminClient();
-  const { data } = await admin.storage
-    .from("project-media")
-    .createSignedUrls(wanted, mediaLinkSeconds);
-  const map = new Map<string, string>();
-  (data ?? []).forEach((r) => {
-    if (r.path && r.signedUrl) map.set(r.path, r.signedUrl);
-  });
-  return map;
-}
 
 export default async function PublicUnitPage({
   params,
@@ -40,16 +22,12 @@ export default async function PublicUnitPage({
 
   const gallery: string[] = u.images ?? [];
   const features: string[] = u.features ?? [];
-  const signed = await signPublic([
+  const { sign } = await signPublicMedia([
     u.cover_image,
     u.floor_plan_url,
     u.video_url,
     ...gallery,
   ]);
-  const sign = (v: string | null | undefined) => {
-    const p = storagePath(v);
-    return (p && signed.get(p)) || v || undefined;
-  };
   const coverSrc = sign(u.cover_image);
   const floorPlanSrc = sign(u.floor_plan_url);
   const videoSrc = sign(u.video_url);
@@ -66,11 +44,14 @@ export default async function PublicUnitPage({
           <Logo size={44} />
         </div>
 
-        <div className="card overflow-hidden">
+        <div className="card overflow-hidden relative">
           {u.cover_image && (
             // eslint-disable-next-line @next/next/no-img-element
             <img src={coverSrc} alt="" className="w-full h-52 object-cover" />
           )}
+          <div className="absolute top-3 left-3">
+            <FavoriteButton unitId={id} />
+          </div>
           <div className="p-5">
             <div className="flex items-start justify-between gap-2">
               <h1 className="text-xl font-extrabold m-0">{u.project_name}</h1>
@@ -81,7 +62,18 @@ export default async function PublicUnitPage({
               )}
             </div>
             <p className="text-sm mt-1 mb-0" style={{ color: "var(--muted)" }}>
-              {u.developer_name && <span>{u.developer_name} · </span>}
+              {u.developer_name &&
+                (u.developer_id ? (
+                  <Link
+                    href={`/d/${u.developer_id}`}
+                    style={{ color: "var(--brand)", fontWeight: 700 }}
+                  >
+                    {u.developer_name}
+                  </Link>
+                ) : (
+                  <span>{u.developer_name}</span>
+                ))}
+              {u.developer_name && <span> · </span>}
               {u.city} — {u.district_name}
             </p>
 
@@ -177,7 +169,13 @@ export default async function PublicUnitPage({
           </div>
         </div>
 
-        <p className="text-center text-xs mt-6" style={{ color: "var(--muted)" }}>
+        <div className="text-center mt-4">
+          <Link href="/favorites" className="btn btn-ghost text-sm">
+            ♥ المفضّلة
+          </Link>
+        </div>
+
+        <p className="text-center text-xs mt-4" style={{ color: "var(--muted)" }}>
           عرض مقدّم عبر{" "}
           <Link href="/" style={{ color: "var(--brand)", fontWeight: 700 }}>
             {APP_NAME}

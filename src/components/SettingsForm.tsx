@@ -20,6 +20,7 @@ export function SettingsForm({ profile }: { profile: Profile | null }) {
       .update({
         full_name: (fd.get("full_name") as string).trim(),
         phone: ((fd.get("phone") as string) || "").trim(),
+        fal_license: ((fd.get("fal_license") as string) || "").trim() || null,
       })
       .eq("id", profile.id);
     setSaving(false);
@@ -56,6 +57,16 @@ export function SettingsForm({ profile }: { profile: Profile | null }) {
           name="phone"
           className="field"
           defaultValue={profile.phone ?? ""}
+          style={{ direction: "ltr", textAlign: "right" }}
+        />
+      </div>
+      <div>
+        <label className="label">رقم رخصة فال (للوسطاء)</label>
+        <input
+          name="fal_license"
+          className="field"
+          defaultValue={profile.fal_license ?? ""}
+          placeholder="رقم رخصة الوساطة العقارية"
           style={{ direction: "ltr", textAlign: "right" }}
         />
       </div>

@@ -43,6 +43,7 @@ export default function SignupPage() {
           data: {
             full_name: (fd.get("full_name") as string).trim(),
             phone: ((fd.get("phone") as string) || "").trim(),
+            fal_license: ((fd.get("fal_license") as string) || "").trim(),
           },
         },
       }));
@@ -149,6 +150,15 @@ export default function SignupPage() {
                 className="field"
                 required
                 minLength={6}
+                style={{ direction: "ltr", textAlign: "right" }}
+              />
+            </div>
+            <div>
+              <label className="label">رقم رخصة فال (للوسطاء — اختياري)</label>
+              <input
+                name="fal_license"
+                className="field"
+                placeholder="إن كنت وسيطًا عقاريًا"
                 style={{ direction: "ltr", textAlign: "right" }}
               />
             </div>
