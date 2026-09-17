@@ -5,6 +5,7 @@ import { createAdminClient } from "@/lib/supabase/admin";
 import { getPublicSettings } from "@/lib/settings";
 import { storagePath } from "@/lib/media-url";
 import { Logo } from "@/components/Logo";
+import { BookVisit } from "@/components/BookVisit";
 import { PROJECT_STATUS, UNIT_STATUS } from "@/lib/inventory-constants";
 import { APP_NAME } from "@/lib/constants";
 
@@ -27,8 +28,11 @@ async function signPublic(values: (string | null | undefined)[]) {
 
 export default async function PublicUnitPage({
   params,
+  searchParams,
 }: PageProps<"/u/[id]">) {
   const { id } = await params;
+  const sp = await searchParams;
+  const brokerCode = typeof sp.b === "string" ? sp.b : undefined;
   const supabase = await createClient();
   const { data } = await supabase.rpc("public_unit_card", { p_unit_id: id });
   const u = data?.[0];
@@ -165,6 +169,10 @@ export default async function PublicUnitPage({
                   📍 الموقع
                 </a>
               )}
+            </div>
+
+            <div className="mt-3">
+              <BookVisit unitId={id} brokerCode={brokerCode} />
             </div>
           </div>
         </div>

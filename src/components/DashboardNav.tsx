@@ -62,6 +62,7 @@ export function DashboardNav({
       title: "العملاء",
       links: [
         { href: "/dashboard/clients", label: "عملائي", icon: "users" },
+        { href: "/dashboard/visits", label: "طلبات الزيارة", icon: "calendar" },
         { href: "/dashboard/leads", label: "طلبات العملاء", icon: "inbox" },
         { href: "/dashboard/listings", label: "عروضي", icon: "tag" },
         { href: "/dashboard/matching", label: "المطابقة", icon: "target" },

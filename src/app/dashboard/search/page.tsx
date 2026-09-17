@@ -11,10 +11,16 @@ export default async function SearchPage() {
   let districtsQ = supabase.from("districts").select("*").order("city");
   if (covered) districtsQ = districtsQ.in("id", covered);
 
-  const [{ data: districts }, { data: developers }] = await Promise.all([
-    districtsQ,
-    supabase.from("developers").select("*").order("name"),
-  ]);
+  const [{ data: districts }, { data: developers }, { data: code }] =
+    await Promise.all([
+      districtsQ,
+      supabase.from("developers").select("*").order("name"),
+      supabase
+        .from("broker_codes")
+        .select("code")
+        .eq("user_id", me?.userId ?? "")
+        .maybeSingle(),
+    ]);
 
   return (
     <div>
@@ -24,6 +30,7 @@ export default async function SearchPage() {
         developers={(developers as Developer[]) ?? []}
         canReserve={me?.canReserve ?? false}
         coverageIds={covered}
+        brokerCode={(code as { code: string } | null)?.code}
       />
     </div>
   );

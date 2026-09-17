@@ -5,17 +5,22 @@ import { useState } from "react";
 export function ShareButton({
   unitId,
   summary,
+  brokerCode,
   className = "btn btn-ghost !py-1.5 !px-3 text-sm",
 }: {
   unitId: string;
   summary: string; // نص ملخّص يُرسل مع الرابط
+  brokerCode?: string; // كود المسوّق — لنسب طلبات الزيارة إليه
   className?: string;
 }) {
   const [open, setOpen] = useState(false);
   const [copied, setCopied] = useState(false);
 
+  const suffix = brokerCode ? `?b=${encodeURIComponent(brokerCode)}` : "";
   const link =
-    typeof window !== "undefined" ? `${window.location.origin}/u/${unitId}` : "";
+    typeof window !== "undefined"
+      ? `${window.location.origin}/u/${unitId}${suffix}`
+      : "";
   const waText = encodeURIComponent(`${summary}\n${link}`);
 
   async function copy() {

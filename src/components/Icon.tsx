@@ -101,6 +101,12 @@ const PATHS: Record<string, JSX.Element> = {
       <path d="M13.73 21a2 2 0 0 1-3.46 0" />
     </>
   ),
+  calendar: (
+    <>
+      <rect x="3" y="4" width="18" height="17" rx="2" />
+      <path d="M3 9h18M8 2v4M16 2v4" />
+    </>
+  ),
 };
 
 export function Icon({ name, size = 20 }: { name: string; size?: number }) {

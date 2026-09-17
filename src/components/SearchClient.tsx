@@ -6,6 +6,7 @@ import { PROJECT_STATUS, UNIT_STATUS } from "@/lib/inventory-constants";
 import { ReserveModal, type ReserveTarget } from "@/components/ReserveModal";
 import { ShareButton } from "@/components/ShareButton";
 import { AddToClientButton } from "@/components/AddToClientButton";
+import { mediaSrc } from "@/lib/media-url";
 import type {
   Developer,
   District,
@@ -48,11 +49,13 @@ export function SearchClient({
   developers,
   canReserve,
   coverageIds = null,
+  brokerCode,
 }: {
   districts: District[];
   developers: Developer[];
   canReserve: boolean;
   coverageIds?: string[] | null;
+  brokerCode?: string;
 }) {
   const [f, setF] = useState<Filters>({ ...EMPTY });
   const [rows, setRows] = useState<UnitSearchRow[]>([]);
@@ -252,7 +255,7 @@ export function SearchClient({
                   </button>
                   {r.floor_plan_url && (
                     <a
-                      href={r.floor_plan_url}
+                      href={mediaSrc(r.floor_plan_url)}
                       target="_blank"
                       rel="noopener noreferrer"
                       className="btn btn-ghost !py-1.5 !px-3 text-sm"
@@ -262,6 +265,7 @@ export function SearchClient({
                   )}
                   <ShareButton
                     unitId={r.id}
+                    brokerCode={brokerCode}
                     summary={`${r.project_name} — ${r.bedrooms ?? ""} غرف${
                       r.area ? ` · ${r.area} م²` : ""
                     }${r.price != null ? ` · ${Number(r.price).toLocaleString("en-US")} ر.س` : ""}`}

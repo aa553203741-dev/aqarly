@@ -69,6 +69,24 @@ export interface LeadSuggestion {
   created_at: string;
 }
 
+export type VisitStatus = "new" | "confirmed" | "done" | "cancelled";
+
+export interface VisitBooking {
+  id: string;
+  org_id: string;
+  unit_id: string | null;
+  project_id: string | null;
+  marketer_id: string | null;
+  client_name: string;
+  client_phone: string;
+  preferred_at: string;
+  note: string;
+  status: VisitStatus;
+  created_at: string;
+  unit?: { unit_no: string } | null;
+  project?: { name: string } | null;
+}
+
 export interface Referral {
   id: string;
   referrer_user_id: string;
