@@ -96,6 +96,14 @@ body {
   border-radius: var(--radius);
 }
 
+/* إخفاء مثلّث <details> الافتراضي حتى يبدو الملخّص كزرّ نظيف */
+summary {
+  list-style: none;
+}
+summary::-webkit-details-marker {
+  display: none;
+}
+
 .btn {
   display: inline-flex;
   align-items: center;

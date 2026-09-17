@@ -11,7 +11,6 @@ import type {
   Developer,
   District,
   UnitSearchRow,
-  UnitStatus,
 } from "@/lib/inventory-types";
 
 type Filters = {
