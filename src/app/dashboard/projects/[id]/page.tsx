@@ -5,6 +5,7 @@ import { getMe } from "@/lib/me";
 import { PROJECT_STATUS } from "@/lib/inventory-constants";
 import { ProjectInventory } from "@/components/ProjectInventory";
 import { ProjectGallery } from "@/components/ProjectGallery";
+import { UnitsImport } from "@/components/UnitsImport";
 import { mediaSrc } from "@/lib/media-url";
 import type { Project, UnitModel, Unit } from "@/lib/inventory-types";
 
@@ -73,6 +74,12 @@ export default async function ProjectDetailPage({
       <ProjectGallery
         projectId={p.id}
         initial={p.images ?? []}
+        canManage={me?.canManageInventory ?? false}
+      />
+
+      <UnitsImport
+        projectId={p.id}
+        initialModels={(models as UnitModel[]) ?? []}
         canManage={me?.canManageInventory ?? false}
       />
 
