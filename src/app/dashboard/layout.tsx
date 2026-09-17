@@ -19,7 +19,9 @@ export default async function DashboardLayout({
         isStaff={me.canProcessPayments || me.canCloseDeals}
       />
       <main className="sm:mr-56 min-h-screen">
-        <div className="w-full max-w-[1000px] mx-auto px-4 py-6">{children}</div>
+        <div className="w-full max-w-[1000px] mx-auto px-4 pt-6 pb-28 sm:pb-6">
+          {children}
+        </div>
       </main>
     </div>
   );

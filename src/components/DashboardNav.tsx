@@ -164,26 +164,94 @@ export function DashboardNav({
         <UserBox />
       </aside>
 
-      {/* ===== شريط علوي للجوال ===== */}
+      {/* ===== شريط علوي للجوال: شعار + بحث بارز + إشعارات ===== */}
       <header
-        className="no-print sm:hidden sticky top-0 z-20 border-b flex items-center justify-between px-4 h-14"
+        className="no-print sm:hidden sticky top-0 z-20 border-b flex items-center px-4 h-14"
         style={{ background: "var(--surface)", borderColor: "var(--border)" }}
       >
-        <Link href="/dashboard" className="no-underline">
+        <Link href="/dashboard" className="no-underline shrink-0">
           <Logo size={28} />
         </Link>
-        <div className="flex items-center gap-3">
+        <Link
+          href="/dashboard/search"
+          className="flex-1 mx-3 flex items-center gap-2 h-9 rounded-full px-3 no-underline"
+          style={{
+            background: "color-mix(in srgb, var(--text) 6%, transparent)",
+            color: "var(--muted)",
+          }}
+        >
+          <Icon name="search" size={16} />
+          <span className="text-sm">ابحث عن وحدة…</span>
+        </Link>
+        <div className="shrink-0">
           <NotificationsBell />
-          <button
-            onClick={() => setOpen(true)}
-            aria-label="القائمة"
-            className="text-2xl leading-none"
-            style={{ color: "var(--text)" }}
-          >
-            ☰
-          </button>
         </div>
       </header>
+
+      {/* ===== شريط تنقّل سفلي للجوال ===== */}
+      <nav
+        className="no-print sm:hidden fixed bottom-0 inset-x-0 z-20 border-t flex items-stretch"
+        style={{
+          background: "var(--surface)",
+          borderColor: "var(--border)",
+          paddingBottom: "env(safe-area-inset-bottom)",
+        }}
+      >
+        <BottomTab
+          href="/dashboard"
+          label="الرئيسية"
+          icon="home"
+          active={pathname === "/dashboard"}
+        />
+        <BottomTab
+          href="/dashboard/inventory"
+          label="المخزون"
+          icon="grid"
+          active={pathname.startsWith("/dashboard/inventory")}
+        />
+        {/* زر الخريطة المرتفع في الوسط */}
+        <Link
+          href="/dashboard/map"
+          className="flex-1 flex flex-col items-center justify-end pb-1.5 no-underline"
+        >
+          <span
+            className="-mt-6 w-14 h-14 rounded-full flex items-center justify-center"
+            style={{
+              background: "var(--brand)",
+              color: "#fff",
+              boxShadow: "0 4px 14px rgba(0,0,0,.25)",
+              border: "3px solid var(--surface)",
+            }}
+          >
+            <Icon name="pin" size={24} />
+          </span>
+          <span
+            className="text-[10px] font-bold mt-0.5"
+            style={{
+              color: pathname.startsWith("/dashboard/map")
+                ? "var(--brand)"
+                : "var(--muted)",
+            }}
+          >
+            الخريطة
+          </span>
+        </Link>
+        <BottomTab
+          href="/dashboard/notifications"
+          label="التنبيهات"
+          icon="bell"
+          active={pathname.startsWith("/dashboard/notifications")}
+        />
+        <button
+          onClick={() => setOpen(true)}
+          className="flex-1 flex flex-col items-center justify-center gap-0.5 py-2"
+          style={{ color: "var(--muted)" }}
+          aria-label="المزيد"
+        >
+          <span className="text-xl leading-none">☰</span>
+          <span className="text-[10px] font-bold">المزيد</span>
+        </button>
+      </nav>
 
       {/* ===== درج الجوال المنزلق ===== */}
       {open && (
@@ -211,5 +279,28 @@ export function DashboardNav({
         </div>
       )}
     </>
+  );
+}
+
+function BottomTab({
+  href,
+  label,
+  icon,
+  active,
+}: {
+  href: string;
+  label: string;
+  icon: string;
+  active: boolean;
+}) {
+  return (
+    <Link
+      href={href}
+      className="flex-1 flex flex-col items-center justify-center gap-0.5 py-2 no-underline"
+      style={{ color: active ? "var(--brand)" : "var(--muted)" }}
+    >
+      <Icon name={icon} size={20} />
+      <span className="text-[10px] font-bold">{label}</span>
+    </Link>
   );
 }
