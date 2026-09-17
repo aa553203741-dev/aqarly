@@ -61,8 +61,8 @@ export default function FavoritesPage() {
       <div className="w-full max-w-[520px]">
         <div className="flex items-center justify-between mb-5">
           <Logo size={34} />
-          <Link href="/" className="btn btn-ghost text-sm">
-            الرئيسية
+          <Link href="/explore" className="btn btn-ghost text-sm">
+            استكشف العروض
           </Link>
         </div>
         <h1 className="text-2xl font-extrabold mt-0 mb-4">المفضّلة ♥</h1>

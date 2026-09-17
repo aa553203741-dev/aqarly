@@ -169,7 +169,13 @@ export default async function PublicUnitPage({
           </div>
         </div>
 
-        <div className="text-center mt-4">
+        <div className="flex justify-center gap-2 mt-4">
+          <Link
+            href={`/explore${brokerCode ? `?b=${brokerCode}` : ""}`}
+            className="btn btn-ghost text-sm"
+          >
+            تصفّح كل العروض
+          </Link>
           <Link href="/favorites" className="btn btn-ghost text-sm">
             ♥ المفضّلة
           </Link>
