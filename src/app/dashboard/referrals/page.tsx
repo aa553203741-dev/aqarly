@@ -1,5 +1,6 @@
 import { createClient } from "@/lib/supabase/server";
 import { ShareCode } from "@/components/ShareCode";
+import { CatalogShare } from "@/components/CatalogShare";
 import type { Referral } from "@/lib/types";
 
 const STATUS_LABEL: Record<Referral["status"], string> = {
@@ -34,6 +35,10 @@ export default async function ReferralsPage() {
       <h1 className="text-2xl font-extrabold mt-0 mb-5">كودي والدعوات</h1>
 
       <ShareCode code={code} />
+
+      <div className="mt-4">
+        <CatalogShare code={code} />
+      </div>
 
       <h2 className="text-base font-bold mt-7 mb-3">دعواتي</h2>
       {referrals.length === 0 ? (
