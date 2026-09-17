@@ -68,6 +68,9 @@ export default async function ExplorePage({
         <div className="flex items-center justify-between mb-5">
           <Logo size={34} />
           <div className="flex gap-2">
+            <Link href="/calculator" className="btn btn-ghost text-sm">
+              🧮 الحاسبة
+            </Link>
             <Link href="/favorites" className="btn btn-ghost text-sm">
               ♥ المفضّلة
             </Link>

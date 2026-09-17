@@ -5,6 +5,7 @@ import { signPublicMedia } from "@/lib/media-server";
 import { Logo } from "@/components/Logo";
 import { BookVisit } from "@/components/BookVisit";
 import { FavoriteButton } from "@/components/FavoriteButton";
+import { HomeCalculator } from "@/components/HomeCalculator";
 import { PROJECT_STATUS, UNIT_STATUS } from "@/lib/inventory-constants";
 import { APP_NAME } from "@/lib/constants";
 
@@ -166,6 +167,20 @@ export default async function PublicUnitPage({
             <div className="mt-3">
               <BookVisit unitId={id} brokerCode={brokerCode} />
             </div>
+
+            {price != null && (
+              <details className="mt-4">
+                <summary
+                  className="btn btn-ghost text-sm cursor-pointer"
+                  style={{ listStyle: "none" }}
+                >
+                  🧮 حاسبة التمويل
+                </summary>
+                <div className="mt-3">
+                  <HomeCalculator initialPrice={Number(price)} compact />
+                </div>
+              </details>
+            )}
           </div>
         </div>
 
