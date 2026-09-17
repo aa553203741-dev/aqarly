@@ -3,6 +3,7 @@ import { getMe } from "@/lib/me";
 import { getPublicSettings } from "@/lib/settings";
 import { SettingsForm } from "@/components/SettingsForm";
 import { SystemSettingsForm } from "@/components/SystemSettingsForm";
+import { BiometricToggle } from "@/components/BiometricToggle";
 import { ThemeControls } from "@/components/ThemeControls";
 import type { Profile } from "@/lib/types";
 
@@ -38,6 +39,11 @@ export default async function SettingsPage() {
       <div className="mt-4">
         <ThemeControls />
       </div>
+
+      <h2 className="text-base font-bold mt-7 mb-3">الأمان</h2>
+      <BiometricToggle
+        userName={data?.full_name || data?.email || "مستخدم"}
+      />
 
       {isAdmin && sys && (
         <>

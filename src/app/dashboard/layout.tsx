@@ -1,6 +1,7 @@
 import { redirect } from "next/navigation";
 import { getMe } from "@/lib/me";
 import { DashboardNav } from "@/components/DashboardNav";
+import { BiometricLock } from "@/components/BiometricLock";
 
 export default async function DashboardLayout({
   children,
@@ -12,6 +13,7 @@ export default async function DashboardLayout({
 
   return (
     <div className="flex-1">
+      <BiometricLock />
       <DashboardNav
         name={p?.full_name || p?.email || "وسيط"}
         plan={p?.plan || "free"}
